@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartfarm.chameleon.domain.login.dao.LoginMapper">
+
+    <select id="login"
+        parameterType="com.smartfarm.chameleon.domain.login.dto.UserDTO"
+        resultType="com.smartfarm.chameleon.domain.login.dto.UserDTO">
+
+        SELECT 
+            user_id, user_pwd, user_name
+        FROM 
+            user
+        WHERE 
+            user_id = #{user_id};    
+
+    </select>
+
+</mapper>
