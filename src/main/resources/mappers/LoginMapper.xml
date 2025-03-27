@@ -3,6 +3,7 @@
 
 <mapper namespace="com.smartfarm.chameleon.domain.login.dao.LoginMapper">
 
+    <!-- 사용자 로그인 -->
     <select id="login"
         parameterType="com.smartfarm.chameleon.domain.login.dto.UserDTO"
         resultType="com.smartfarm.chameleon.domain.login.dto.UserDTO">
@@ -13,6 +14,15 @@
             user
         WHERE 
             user_id = #{user_id};    
+
+    </select>
+
+    <!-- 사용자 이름 반환 -->
+    <select id="read_user_name">
+
+        SELECT  user_name
+        FROM    user
+        WHERE   user_id = #{user_id};    
 
     </select>
 
