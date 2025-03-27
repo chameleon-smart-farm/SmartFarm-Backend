@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartfarm.chameleon.domain.house.dao.HouseMapper">
+
+    <!-- 사용자 아이디로 사용자 index id 받아오기 -->
+    <select id="read_index"
+        resultType="java.lang.Integer">
+
+        SELECT  id
+        FROM    user
+        WHERE   user_id = #{user_id}
+
+    </select>
+
+    <!-- 사용자 index id로 농장 아이디, 농장 백엔드 주소 받아오기 -->
+    <select id="read_back_url"
+        parameterType="java.lang.Integer"
+        resultType="com.smartfarm.chameleon.domain.house.dto.UserHouseDTO">
+
+        SELECT  id, house_id, house_name, house_back_url
+        FROM    house
+        WHERE   id=#{id}
+
+    </select>
+
+</mapper>
