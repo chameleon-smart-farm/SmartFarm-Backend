@@ -36,8 +36,8 @@ public class HouseService {
         // 사용자 index id 받아오기
         int id = houseMapper.read_index(user_id);
 
-        // 사용자 index id로 농장 아이디, 농장 백엔드 주소 받아오기
-        List<UserHouseDTO> url_list = houseMapper.read_back_url(id);
+        // 사용자 index id로 농장 아이디, 농장 이름, 농장 백엔드 주소 받아오기
+        List<UserHouseDTO> url_list = houseMapper.read_back_url_list(id);
 
         // 결과를 담을 List
         List<HouseInfoDTO> result = new ArrayList<>();
@@ -70,5 +70,30 @@ public class HouseService {
 
         return result;
         
+    }
+
+    // 사용자 index id로 사용자가 보유한 농장 이름 리스트 반환
+    public List<HouseInfoDTO> read_house_name_list(String access_token){
+
+        // 사용자 아이디
+        String user_id = jwtTokenProvider.getUserID(access_token);
+        // 사용자 index id 받아오기
+        int id = houseMapper.read_index(user_id);
+
+        return houseMapper.read_house_name_list(id);
+    }
+
+    // 농장 아이디로 농장 이름과 키우는 작물 수정
+    public void update_house_name(String access_token, HouseInfoDTO houseInfoDto){
+
+        // 농장 아이디로 농장 이름 변경
+        houseMapper.update_house_name(houseInfoDto);
+
+        // 농장 아이디로 농장의 백엔드 주소 가져오기
+        String put_url = houseMapper.read_back_url(houseInfoDto.getHouse_id()) + "/house/update";
+
+        // put 요청
+        httpHouse.put_http_connection(put_url, houseInfoDto);
+
     }
 }
