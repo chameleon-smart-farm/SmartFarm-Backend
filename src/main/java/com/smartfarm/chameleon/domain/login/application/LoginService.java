@@ -70,6 +70,17 @@ public class LoginService {
     }
 
     /**
+     * Access Token에서 ID를 받아오고 DB에서 이 ID를 통해 이름을 반환받는다.
+     * 
+     * @param access_token
+     * @return
+     */
+    public String get_name(String access_token){
+
+        return loginMapper.read_user_name(jwtTokenProvider.getUserID(access_token));
+    }
+
+    /**
      * redis에서 사용자 아이디를 key로 refresh_token을 삭제한다.
      * 
      * @param access_token : header에 있던 access_token

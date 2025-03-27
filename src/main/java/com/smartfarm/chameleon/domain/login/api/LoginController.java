@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smartfarm.chameleon.domain.login.application.LoginService;
 import com.smartfarm.chameleon.domain.login.dto.TokenDTO;
 import com.smartfarm.chameleon.domain.login.dto.UserDTO;
-import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -33,6 +33,7 @@ public class LoginController {
 
 
     @PostMapping("/login")
+    @Operation(summary = "로그인" , description = "사용자 아이디, 비밀번호를 받고 Access Token, Refresh Token을 반환하는 API")
     public ResponseEntity<TokenDTO> login(@RequestBody UserDTO userDTO ) {
 
         log.info("login api");
@@ -54,6 +55,7 @@ public class LoginController {
 
 
     @GetMapping("/api/logout")
+    @Operation(summary = "로그아웃" , description = "Redis에서 Refresh Token 삭제")
     public void logout(@RequestHeader("Authorization") String access_token) {
     
         log.info("logout api");
@@ -61,6 +63,12 @@ public class LoginController {
         loginService.logout(access_token.substring(7));
 
     }
+
+    @GetMapping("/get_name")
+    public ResponseEntity<String> get_name(@RequestHeader("Authorization") String access_token) {
+        return new ResponseEntity<>(loginService.get_name(access_token.substring(7)), HttpStatus.OK);
+    }
+    
 
     @GetMapping("/test")
     public void test(@RequestHeader("Authorization") String access_token, @RequestHeader("REFRESH_TOKEN") String refresh_token) {
