@@ -9,6 +9,6 @@ public class UserDTO {
     private String user_name;
     private String user_id;
     private String user_pwd;
-    // private String faw_crop;
+    private String faw_crop;
        
 }
