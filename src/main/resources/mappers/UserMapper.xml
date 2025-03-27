@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smartfarm.chameleon.domain.user.dao.UserMapper">
+
+    <!-- 사용자 정보 : 이름, 관심 작물, 아이디 정보 반환 -->
+    <select id="read_user"
+        resultType="com.smartfarm.chameleon.domain.login.dto.UserDTO">
+
+        SELECT  user_name, faw_crop, user_id
+        FROM    user
+        WHERE   user_id = #{user_id}
+    </select>
+
+    <!-- 사용자 이름, 관심 작물 수정 -->
+    <update id="update_user"
+        parameterType="com.smartfarm.chameleon.domain.login.dto.UserDTO" >
+
+        UPDATE  user
+        SET     
+            user_name = #{user_name},
+            faw_crop = #{faw_crop}
+        WHERE 
+            user_id = #{user_id}
+
+    </update>
+
+</mapper>
