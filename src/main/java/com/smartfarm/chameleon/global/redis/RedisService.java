@@ -17,7 +17,7 @@ public class RedisService {
      * 
      * @param user_id : user_id
      * @param refresh_token : refresh_token
-     * @param expiredTime : refresh_token 절대적 만료 기간
+     * @param expiredTime : refresh_token 만료 기간
      */
     public void setData(String user_id, String refresh_token, Long expiredTime){
         redisTemplate.opsForValue().set(user_id, refresh_token, expiredTime, TimeUnit.MILLISECONDS);
