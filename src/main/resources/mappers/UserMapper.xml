@@ -25,4 +25,14 @@
 
     </update>
 
+    <!-- 시리얼 번호 확인 후 house_id 반환 -->
+    <select id="validate_serial"
+        resultType="java.lang.Integer" >
+
+        SELECT  house_id
+        FROM    house
+        WHERE   house_serial=#{serial}
+
+    </select>
+
 </mapper>

@@ -47,4 +47,13 @@ public class UserService {
         userMapper.update_user(userDTO);
     }
     
+    /**
+     * 사용자가 입력한 serial번호를 받아서 해당하는 농장이 있는지 확인
+     * 
+     * @param serial
+     * @return : 해당하는 농장 아이디
+     */
+    public int validate_serial(String serial){
+        return userMapper.validate_serial(serial);
+    }
 }
