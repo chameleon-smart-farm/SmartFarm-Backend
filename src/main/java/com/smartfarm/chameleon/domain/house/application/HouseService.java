@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
 import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
@@ -48,7 +49,7 @@ public class HouseService {
             String get_url = h.getHouse_back_url() + "/house/info";
 
             // get 요청
-            JSONObject house_result = httpHouse.get_http_connection(get_url).get();
+            JSONObject house_result = (JSONObject) httpHouse.get_http_connection(get_url).get();
 
             // 결과 생성
             HouseInfoDTO info_result = new HouseInfoDTO();
@@ -85,7 +86,8 @@ public class HouseService {
     }
 
     // 농장 아이디로 농장 이름과 키우는 작물 수정
-    public void update_house_name(String access_token, HouseInfoDTO houseInfoDto){
+    @Transactional
+    public void update_house_name(HouseInfoDTO houseInfoDto){
 
         // 농장 아이디로 농장 이름 변경
         houseMapper.update_house_name(houseInfoDto);
@@ -105,7 +107,7 @@ public class HouseService {
         String get_url = houseMapper.read_back_url(house_id) + "/get_weather_info";
 
         // get 요청
-        JSONObject weather_result = httpHouse.get_http_connection(get_url).get();
+        JSONObject weather_result = (JSONObject) httpHouse.get_http_connection(get_url).get();
 
         log.info(weather_result.toJSONString());
 
