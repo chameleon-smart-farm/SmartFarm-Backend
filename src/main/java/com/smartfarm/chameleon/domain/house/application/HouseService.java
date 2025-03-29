@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
 import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
+import com.smartfarm.chameleon.domain.house.dto.HouseWeatherDTO;
 import com.smartfarm.chameleon.domain.house.dto.UserHouseDTO;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 import com.smartfarm.chameleon.global.toHouse.HttpHouse;
@@ -96,4 +97,26 @@ public class HouseService {
         httpHouse.put_http_connection(put_url, houseInfoDto);
 
     }
+
+    // 농장 아이디로 농장의 기상청 데이터 온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 받아옴
+    public HouseWeatherDTO read_weather_info(int house_id){
+
+        // 농장 아이디로 농장의 백엔드 주소 가져오기
+        String get_url = houseMapper.read_back_url(house_id) + "/get_weather_info";
+
+        // get 요청
+        JSONObject weather_result = httpHouse.get_http_connection(get_url).get();
+
+        log.info(weather_result.toJSONString());
+
+        HouseWeatherDTO houseWeatherDTO = new HouseWeatherDTO();
+        houseWeatherDTO.setWeather_hum(weather_result.get("weather_hum").toString());
+        houseWeatherDTO.setWeather_status(weather_result.get("weather_status").toString());
+        houseWeatherDTO.setWeather_preci(weather_result.get("weather_preci").toString());
+        houseWeatherDTO.setWeather_tem(weather_result.get("weather_tem").toString());
+        houseWeatherDTO.setWeather_wind(weather_result.get("weather_wind").toString());
+
+        return houseWeatherDTO;
+    }
+
 }
