@@ -41,8 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("filter 거치는 중입니다.");
         log.info("Received request for URI: {}", request.getRequestURI());
 
-        // login api라면 filter를 수행하지 않고 넘김
-        if ("/login".equals(request.getRequestURI())) {
+        // login 또는 회원가입이라면 filter를 수행하지 않고 넘김
+        if ("/login".equals(request.getRequestURI()) || "/user/serial".equals(request.getRequestURI())
+                || "/user/sign_up".equals(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
