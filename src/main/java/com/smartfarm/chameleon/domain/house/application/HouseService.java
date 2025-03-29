@@ -48,7 +48,7 @@ public class HouseService {
             String get_url = h.getHouse_back_url() + "/house/info";
 
             // get 요청
-            JSONObject house_result = httpHouse.get_http_connection(get_url).get();
+            JSONObject house_result = (JSONObject) httpHouse.get_http_connection(get_url).get();
 
             // 결과 생성
             HouseInfoDTO info_result = new HouseInfoDTO();
@@ -105,7 +105,7 @@ public class HouseService {
         String get_url = houseMapper.read_back_url(house_id) + "/get_weather_info";
 
         // get 요청
-        JSONObject weather_result = httpHouse.get_http_connection(get_url).get();
+        JSONObject weather_result = (JSONObject) httpHouse.get_http_connection(get_url).get();
 
         log.info(weather_result.toJSONString());
 
