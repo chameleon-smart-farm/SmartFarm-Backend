@@ -51,7 +51,7 @@ public class HouseController {
     @PutMapping("/update")
     @Operation(summary = "농장 정보 수정" , description = "농장 아이디로 농장 이름과 키우는 작물 수정하는 API")
     public void update_house_name(@RequestHeader("Authorization") String access_token, @RequestBody HouseInfoDTO houseInfoDto ) {
-        houseService.update_house_name(access_token.substring(7), houseInfoDto );
+        houseService.update_house_name(houseInfoDto );
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
 import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
@@ -85,7 +86,8 @@ public class HouseService {
     }
 
     // 농장 아이디로 농장 이름과 키우는 작물 수정
-    public void update_house_name(String access_token, HouseInfoDTO houseInfoDto){
+    @Transactional
+    public void update_house_name(HouseInfoDTO houseInfoDto){
 
         // 농장 아이디로 농장 이름 변경
         houseMapper.update_house_name(houseInfoDto);
