@@ -1,10 +1,15 @@
 package com.smartfarm.chameleon.domain.user.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.smartfarm.chameleon.domain.house.application.HouseService;
+import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
 import com.smartfarm.chameleon.domain.login.dto.UserDTO;
 import com.smartfarm.chameleon.domain.user.dao.UserMapper;
+import com.smartfarm.chameleon.domain.user.dto.SignUpDTO;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 
 @Service
@@ -15,6 +20,13 @@ public class UserService {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private HouseService houseService;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
 
     /**
      * 사용자 정보 : 이름, 관심 작물, 아이디 정보 반환
@@ -55,5 +67,33 @@ public class UserService {
      */
     public int validate_serial(String serial){
         return userMapper.validate_serial(serial);
+    }
+
+    /**
+     * 사용자 회원가입 
+     * - 사용자 이름, 아이디, 비밀번호, 관심 작물 입력
+     * - 농장 아이디로 농장 이름과 키우는 작물 수정
+     * 
+     * @param signUpDTO
+     */
+    @Transactional
+    public void sign_up(SignUpDTO signUpDTO){
+
+        // 사용자 비밀번호 암호화
+        String encode_pwd = encoder.encode(signUpDTO.getUser_pwd());
+        signUpDTO.setUser_pwd(encode_pwd);
+
+        // 사용자 회원가입 : 사용자 이름, 아이디, 비밀번호, 관심 작물 입력
+        userMapper.sign_up(signUpDTO);
+
+        // 농장 아이디, 농장 이름, 키우는 작물이 담긴 DTO 생성
+        HouseInfoDTO houseInfoDTO = new HouseInfoDTO();
+        houseInfoDTO.setHouse_id(signUpDTO.getHouse_id());
+        houseInfoDTO.setHouse_name(signUpDTO.getHouse_name());
+        houseInfoDTO.setHouse_crop(signUpDTO.getHouse_crop());
+
+        // 사용자 회원가입 : 농장 아이디로 농장 이름과 키우는 작물 수정
+        houseService.update_house_name(houseInfoDTO);
+
     }
 }

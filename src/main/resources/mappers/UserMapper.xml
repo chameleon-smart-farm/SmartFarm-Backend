@@ -35,4 +35,12 @@
 
     </select>
 
+    <insert id="sign_up"
+        parameterType="com.smartfarm.chameleon.domain.user.dto.SignUpDTO" >
+
+        INSERT INTO user (user_name, user_id, user_pwd, faw_crop)
+        VALUES  (#{user_name}, #{user_id}, #{user_pwd}, #{faw_crop} )
+
+    </insert>
+
 </mapper>
