@@ -39,7 +39,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())       // csrf 보안을 사용 X
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/login", "/user/serial", "/user/sign_up").permitAll() // 로그인 API는 인증 없이 접근 가능
+                    .requestMatchers("/login", "/user/serial", "/user/sign_up",
+                                        "/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll() // 로그인 API는 인증 없이 접근 가능
                     .anyRequest().authenticated() // 나머지는 인증 필요
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, redisService), 
