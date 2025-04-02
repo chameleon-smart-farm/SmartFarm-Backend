@@ -3,10 +3,9 @@ package com.smartfarm.chameleon.domain.user.api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smartfarm.chameleon.domain.house.application.HouseService;
-import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
 import com.smartfarm.chameleon.domain.login.dto.UserDTO;
 import com.smartfarm.chameleon.domain.user.application.UserService;
+import com.smartfarm.chameleon.domain.user.dto.SignUpDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,9 +29,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private HouseService houseService;
 
     @GetMapping("/info")
     @Operation(summary = "사용자 정보 반환" , description = "이름, 관심 작물, 아이디 정보를 반환하는 API")
@@ -58,9 +54,10 @@ public class UserController {
         return new ResponseEntity<>(userService.validate_serial(serial),HttpStatus.OK);
     }
 
-    @PutMapping("/sign_up")
-    public void putMethodName(@RequestBody HouseInfoDTO houseInfoDto) {
-        houseService.update_house_name(houseInfoDto);
+    @PostMapping("/sign_up")
+    @Operation(summary = "사용자 회원 가입" , description = "사용자 이름, 아이디, 비밀번호, 관심 작물을 입력받고 농장 아이디로 농장 이름과 키우는 작물을 수정하는 API")
+    public void putMethodName(@RequestBody SignUpDTO signUpDTO) {
+        userService.sign_up(signUpDTO);
     }
     
     
