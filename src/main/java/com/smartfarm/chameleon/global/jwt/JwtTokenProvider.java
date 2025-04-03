@@ -24,6 +24,7 @@ public class JwtTokenProvider {
     
     // 토큰 만료 기간
     private final long ACCESS_EXPIRATION_TIME = 2*60*60*1000;
+    // private final long ACCESS_EXPIRATION_TIME = 1000;
     private final long REFRESH_EXPIRATION_TIME = 7*24*60*60*1000;
 
     // access_token 생성
@@ -66,7 +67,7 @@ public class JwtTokenProvider {
             Claims claims = Jwts.parser()
                         .verifyWith(secretKey)
                         .build()
-                        .parseSignedClaims(token)
+                        .parseClaimsJws(token)
                         .getBody();
 
             log.info("token 만료시간 : " + claims.getExpiration());
