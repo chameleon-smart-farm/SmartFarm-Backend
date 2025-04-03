@@ -78,6 +78,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             log.info("access_token 검증 실패");
 
+            log.info( "refresh_token : " + refresh_token);
+            log.info("refresh_token 검증 결과 : " + jwtTokenProvider.validateToken(refresh_token));
+            log.info("refresh_token이 redis에 있는지 : " + redisService.getData(jwtTokenProvider.getUserID(refresh_token)) );
+
             // refresh_token이 존재 && 기본검증+유효기간 검증 통과 && Redis에 refresh_token이 존재
             if (refresh_token != null && jwtTokenProvider.validateToken(refresh_token) 
                     && redisService.getData(jwtTokenProvider.getUserID(refresh_token)) != null ){

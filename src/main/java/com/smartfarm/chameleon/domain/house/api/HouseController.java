@@ -44,7 +44,7 @@ public class HouseController {
 
     @GetMapping("/get_weather_info/{house_id}")
     @Operation(summary = "농장 기상청 데이터 반환" , description = "온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 반환하는 API")
-    public ResponseEntity<HouseWeatherDTO> read_weather_info(@PathVariable("house_id") int house_id) {
+    public ResponseEntity<HouseWeatherDTO> read_weather_info(@RequestHeader("Authorization") String access_token, @PathVariable("house_id") int house_id) {
         return new ResponseEntity<>(houseService.read_weather_info(house_id), HttpStatus.OK);
     }
     
