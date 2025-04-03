@@ -44,7 +44,8 @@ public class SecurityConfig {
                     .anyRequest().authenticated() // 나머지는 인증 필요
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, redisService), 
-                         UsernamePasswordAuthenticationFilter.class);
+                         UsernamePasswordAuthenticationFilter.class)
+                .cors();    // cors 활성화와 동시에 WebConfig 옵션을 사용
         
         return http.build();
     }
