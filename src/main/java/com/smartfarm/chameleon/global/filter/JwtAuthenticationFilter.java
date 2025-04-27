@@ -3,8 +3,6 @@ package com.smartfarm.chameleon.global.filter;
 import java.io.IOException;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -76,29 +74,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         }else{
 
-            log.info("access_token 검증 실패");
+            try {
 
-            log.info( "refresh_token : " + refresh_token);
-            log.info("refresh_token 검증 결과 : " + jwtTokenProvider.validateToken(refresh_token));
-            log.info("refresh_token이 redis에 있는지 : " + redisService.getData(jwtTokenProvider.getUserID(refresh_token)) );
+                log.info("access_token 검증 실패");
 
-            // refresh_token이 존재 && 기본검증+유효기간 검증 통과 && Redis에 refresh_token이 존재
-            if (refresh_token != null && jwtTokenProvider.validateToken(refresh_token) 
-                    && redisService.getData(jwtTokenProvider.getUserID(refresh_token)) != null ){
+                log.info( "refresh_token : " + refresh_token);
+                log.info("refresh_token 검증 결과 : " + jwtTokenProvider.validateToken(refresh_token));
+                log.info("refresh_token이 redis에 있는지 : " + redisService.getData(jwtTokenProvider.getUserID(refresh_token)) );
 
-                log.info("refresh token 검증 통과");
+                // refresh_token이 존재 && 기본검증+유효기간 검증 통과 && Redis에 refresh_token이 존재
+                if (refresh_token != null && jwtTokenProvider.validateToken(refresh_token) 
+                        && redisService.getData(jwtTokenProvider.getUserID(refresh_token)) != null ){
 
-                // 사용자 아이디
-                String userID = jwtTokenProvider.getUserID(refresh_token);
-                TokenDTO new_access_token = jwtTokenProvider.createAccessToken(userID);
+                    log.info("refresh token 검증 통과");
 
-                log.info("새로운 access_token이 발급되었습니다.");
-                response.setContentType("application/json");
-                response.getWriter().write("{\"new_access_token\": \"" + new_access_token.getAccess_token() + "\"}");
-                response.getWriter().flush();
-                return;
+                    // 사용자 아이디
+                    String userID = jwtTokenProvider.getUserID(refresh_token);
+                    TokenDTO new_access_token = jwtTokenProvider.createAccessToken(userID);
 
-            }else{
+                    log.info("새로운 access_token이 발급되었습니다.");
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"new_access_token\": \"" + new_access_token.getAccess_token() + "\"}");
+                    response.getWriter().flush();
+                    return;
+
+                }else{
+                    // 토큰이 만료되었을 경우
+                    log.warn("token이 만료되었습니다!");
+
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드
+                    response.getWriter().write("token is expired or invalid.");
+                    response.getWriter().flush();
+                    return;
+                }
+                
+            } catch (Exception e) {
                 // 토큰이 만료되었을 경우
                 log.warn("token이 만료되었습니다!");
 
@@ -107,6 +117,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.getWriter().flush();
                 return;
             }
+
+            
         }
 
         log.info("next filter");
