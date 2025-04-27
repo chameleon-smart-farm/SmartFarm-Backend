@@ -112,11 +112,11 @@ public class HouseService {
         log.info(weather_result.toJSONString());
 
         HouseWeatherDTO houseWeatherDTO = new HouseWeatherDTO();
-        houseWeatherDTO.setWeather_hum(weather_result.get("weather_hum").toString());
-        houseWeatherDTO.setWeather_status(weather_result.get("weather_status").toString());
-        houseWeatherDTO.setWeather_preci(weather_result.get("weather_preci").toString());
-        houseWeatherDTO.setWeather_tem(weather_result.get("weather_tem").toString());
-        houseWeatherDTO.setWeather_wind(weather_result.get("weather_wind").toString());
+        houseWeatherDTO.setWeather_hum(weather_result.get("weatherHum").toString());
+        houseWeatherDTO.setWeather_status(weather_result.get("weatherStatus").toString());
+        houseWeatherDTO.setWeather_preci(weather_result.get("weatherPreci").toString());
+        houseWeatherDTO.setWeather_tem(weather_result.get("weatherTem").toString());
+        houseWeatherDTO.setWeather_wind(weather_result.get("weatherWind").toString());
 
         return houseWeatherDTO;
     }
