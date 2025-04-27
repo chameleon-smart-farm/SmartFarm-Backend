@@ -65,6 +65,7 @@ public class LoginController {
     }
 
     @GetMapping("/get_name")
+    @Operation(summary = "사용자 이름 조회" , description = "access_token에서 얻은 사용자 아이디로 DB에서 사용자 이름 조회")
     public ResponseEntity<String> get_name(@RequestHeader("Authorization") String access_token) {
         return new ResponseEntity<>(loginService.get_name(access_token.substring(7)), HttpStatus.OK);
     }
