@@ -1,9 +1,11 @@
 package com.smartfarm.chameleon.domain.house.dto;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 @Data
-public class HouseWeatherDTO {
+public class HouseWeatherDTO implements Serializable {
 
     // 습도
     private String weather_hum;

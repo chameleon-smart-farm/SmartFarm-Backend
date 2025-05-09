@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,7 +103,12 @@ public class HouseService {
     }
 
     // 농장 아이디로 농장의 기상청 데이터 온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 받아옴
+    @Cacheable(value = "weather", key = "#p0")
     public HouseWeatherDTO read_weather_info(int house_id){
+
+        // delete_cache();
+
+        log.info("read_weather_info 메서드 실행");
 
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String get_url = houseMapper.read_back_url(house_id) + "/get_weather_info";
@@ -120,5 +127,10 @@ public class HouseService {
 
         return houseWeatherDTO;
     }
+
+    // 기상청 데이터의 경우 시간이 지나면 기존 데이터는 쓸모가 없으므로
+    // 새로운 캐시가 저장될 경우 기존 캐시를 지운다.
+    @CacheEvict(value = "weather", allEntries = true )
+    public void delete_cache(){};
 
 }
