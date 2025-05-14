@@ -1,5 +1,7 @@
 package com.smartfarm.chameleon.domain.house.api;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,12 @@ public class HouseController {
     @GetMapping("/get_weather_info/{house_id}")
     @Operation(summary = "농장 기상청 데이터 반환" , description = "온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 반환하는 API")
     public ResponseEntity<HouseWeatherDTO> read_weather_info(@RequestHeader("Authorization") String access_token, @PathVariable("house_id") int house_id) {
-        return new ResponseEntity<>(houseService.read_weather_info(house_id), HttpStatus.OK);
+        
+        // 현재 시각을 hh 형식으로 변환
+        LocalDateTime now = LocalDateTime.now();
+        String cur_time = now.format(DateTimeFormatter.ofPattern("HH"));
+
+        return new ResponseEntity<>(houseService.read_weather_info(house_id, cur_time), HttpStatus.OK);
     }
     
     @PutMapping("/update")
