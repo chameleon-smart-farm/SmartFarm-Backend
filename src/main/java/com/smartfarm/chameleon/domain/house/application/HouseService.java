@@ -103,8 +103,8 @@ public class HouseService {
     }
 
     // 농장 아이디로 농장의 기상청 데이터 온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 받아옴
-    @Cacheable(value = "weather", key = "#p0")
-    public HouseWeatherDTO read_weather_info(int house_id){
+    @Cacheable(value = "weather", key ="#p0 + #p1")
+    public HouseWeatherDTO read_weather_info(int house_id, String cur_time){
 
         // delete_cache();
 
