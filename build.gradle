@@ -15,13 +15,13 @@ java {
 
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url = 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
 
 	// spring boot cache
-	implementation 'org.springframework.boot:spring-boot-stater-cache'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 
 	// json parser
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
@@ -53,7 +53,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-web-services'
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
