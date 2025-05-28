@@ -33,6 +33,7 @@ public class HouseService {
     private HttpHouse httpHouse;
     
     // 농장 정보 조회
+    @Cacheable(value = "read_house_info")
     public List<HouseInfoDTO> read_house(String access_token){
 
         // 사용자 아이디
@@ -77,6 +78,7 @@ public class HouseService {
     }
 
     // 사용자 index id로 사용자가 보유한 농장 이름 리스트 반환
+    @Cacheable(value = "read_house_name_list")
     public List<HouseInfoDTO> read_house_name_list(String access_token){
 
         // 사용자 아이디
@@ -88,6 +90,7 @@ public class HouseService {
     }
 
     // 농장 아이디로 농장 이름과 키우는 작물 수정
+    @CacheEvict(value = {"read_house_name_list", "read_house_info"})
     @Transactional
     public void update_house_name(HouseInfoDTO houseInfoDto){
 
@@ -103,7 +106,7 @@ public class HouseService {
     }
 
     // 농장 아이디로 농장의 기상청 데이터 온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 받아옴
-    @Cacheable(value = "weather", key ="#p0 + #p1")
+    @Cacheable(value = "read_weather_info", key ="#p0 + #p1")
     public HouseWeatherDTO read_weather_info(int house_id, String cur_time){
 
         // delete_cache();
@@ -127,10 +130,4 @@ public class HouseService {
 
         return houseWeatherDTO;
     }
-
-    // 기상청 데이터의 경우 시간이 지나면 기존 데이터는 쓸모가 없으므로
-    // 새로운 캐시가 저장될 경우 기존 캐시를 지운다.
-    @CacheEvict(value = "weather", allEntries = true )
-    public void delete_cache(){};
-
 }
