@@ -22,15 +22,17 @@ public class CacheConfig {
         // 기본 configuration 생성
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                                             .disableCachingNullValues()
-                                            .entryTtl(Duration.ofDays(1))
+                                            .entryTtl(Duration.ofMinutes(60))
                                             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()));
 
         // 특정 캐시들의 configuration을 저장할 HashMap
         HashMap<String, RedisCacheConfiguration> configMap = new HashMap<>();
 
-        // weather 캐시 configuration 설정
-        configMap.put("weather", RedisCacheConfiguration.defaultCacheConfig()
-                                        .entryTtl(Duration.ofMinutes(60)));
+        // read_house_info 캐시 configuration 설정
+        configMap.put("read_house_info", RedisCacheConfiguration.defaultCacheConfig()
+                                        .entryTtl(Duration.ofDays(1)));
+        configMap.put("read_house_name_list", RedisCacheConfiguration.defaultCacheConfig()
+                                        .entryTtl(Duration.ofDays(1)));                                
 
 
        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory).cacheDefaults(config)

@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
@@ -27,6 +28,7 @@ public class HouseStatusService {
 
     // 가장 최근에 저장된 온도 데이터와 기상청의 데이터
     // 가장 최근 3시간의 평균 온도 데이터 리스트를 함께 반환
+    @Cacheable(value = "get_tem_data")
     public TemDTO get_tem_data(int house_id){
 
         // 농장 아이디로 농장의 백엔드 주소 가져오기
