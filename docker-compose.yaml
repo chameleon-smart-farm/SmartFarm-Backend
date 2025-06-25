@@ -13,7 +13,7 @@ services:
     networks :
       - default
       - spring-log-elastic
-    platform: linux/amd64
+    platform: linux/arm64
     environment:
       LOGSTASH_HOST: logstash
     restart : always
@@ -27,7 +27,7 @@ services:
       - "6379:6379"
     networks :
       - default
-    platform: linux/amd64
+    platform: linux/arm64
     restart : always
 
 networks:
