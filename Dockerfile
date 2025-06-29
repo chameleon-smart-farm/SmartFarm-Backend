@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine
+FROM arm64v8/openjdk:17-ea-16-jdk
 
 # 외부 환경요소 : jar이 위치할 공간을 지정
 ARG JAR_FILE=build/libs/*-SNAPSHOT.jar
