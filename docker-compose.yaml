@@ -10,6 +10,7 @@ services:
     ports :
       - "8080:8080"
     build : .
+    image : bakhyegyeong/chameleon-spring
     networks :
       - default
       - spring-log-elastic
