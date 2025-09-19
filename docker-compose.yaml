@@ -16,7 +16,7 @@ services:
       - spring-log-elastic
     platform: linux/arm64
     environment:
-      LOGSTASH_HOST: logstash
+      LOGSTASH_HOST: clone-docker-elk_logstash_1
     restart : always
     # server 기동하다가 문제가 발생하면 container를 다시 실행한다.
 
