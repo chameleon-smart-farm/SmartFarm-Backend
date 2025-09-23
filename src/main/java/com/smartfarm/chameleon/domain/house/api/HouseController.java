@@ -17,6 +17,7 @@ import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
 import com.smartfarm.chameleon.domain.house.dto.HouseWeatherDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
 @RequestMapping("/house")
+@Tag(name = "농장 정보 API", description = "농장 서버에 저장되어 있는 농장 정보 조회")
 @RestController
 public class HouseController {
     
