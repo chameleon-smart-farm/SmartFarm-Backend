@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smartfarm.chameleon.domain.house.application.HouseService;
 import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
-import com.smartfarm.chameleon.domain.house.dto.HouseWeatherDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,17 +43,6 @@ public class HouseController {
     @Operation(summary = "농장 이름 리스트 반환" , description = "농장 이름 리스트를 반환하는 API")
     public ResponseEntity<List<HouseInfoDTO>> read_house_name_list(@RequestHeader("Authorization") String access_token) {
         return new ResponseEntity<>(houseService.read_house_name_list(access_token.substring(7)), HttpStatus.OK);
-    }
-
-    @GetMapping("/get_weather_info/{house_id}")
-    @Operation(summary = "농장 기상청 데이터 반환" , description = "온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 반환하는 API")
-    public ResponseEntity<HouseWeatherDTO> read_weather_info(@RequestHeader("Authorization") String access_token, @PathVariable("house_id") int house_id) {
-        
-        // 현재 시각을 hh 형식으로 변환
-        LocalDateTime now = LocalDateTime.now();
-        String cur_time = now.format(DateTimeFormatter.ofPattern("HH"));
-
-        return new ResponseEntity<>(houseService.read_weather_info(house_id, cur_time), HttpStatus.OK);
     }
     
     @PutMapping("/update")
