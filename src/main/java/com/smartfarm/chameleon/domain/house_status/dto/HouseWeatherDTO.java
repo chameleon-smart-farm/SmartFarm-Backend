@@ -1,4 +1,4 @@
-package com.smartfarm.chameleon.domain.house.dto;
+package com.smartfarm.chameleon.domain.house_status.dto;
 
 import java.io.Serializable;
 
