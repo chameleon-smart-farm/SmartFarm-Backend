@@ -1,0 +1,39 @@
+version : "3.8"
+
+services:
+  # spring 등록
+  spring :
+    container_name : chameleon-backend
+    depends_on : 
+      - redis
+      # redis의 설정이 완료될 때까지 기다린다.
+    ports :
+      - "8080:8080"
+    build : .
+    image : bakhyegyeong/chameleon-spring
+    networks :
+      - default
+      - spring-log-elastic
+    platform: linux/arm64
+    environment:
+      LOGSTASH_HOST: clone-docker-elk_logstash_1
+    restart : always
+    # server 기동하다가 문제가 발생하면 container를 다시 실행한다.
+
+  # redis 등록
+  redis :
+    image: redis:latest
+    container_name : chameleon-redis
+    ports :
+      - "6379:6379"
+    networks :
+      - default
+    platform: linux/arm64
+    restart : always
+
+networks:
+  default:
+    driver: bridge
+  spring-log-elastic:
+    external : true
+    name : spring-log-elastic
