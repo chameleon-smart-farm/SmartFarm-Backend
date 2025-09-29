@@ -9,7 +9,7 @@ services:
       # redis의 설정이 완료될 때까지 기다린다.
     ports :
       - "8080:8080"
-    build : .
+    # build : .
     image : bakhyegyeong/chameleon-spring
     networks :
       - default
