@@ -1,6 +1,7 @@
 package com.smartfarm.chameleon.global.filter;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.smartfarm.chameleon.domain.login.dto.TokenDTO;
+import com.smartfarm.chameleon.global.config.SecurityConfig;
 import com.smartfarm.chameleon.global.jwt.CustomUserDetailsService;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 import com.smartfarm.chameleon.global.redis.RedisService;
@@ -24,6 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService userDetailsService;
     private final RedisService redisService;
+    public static final List<String> PUBLIC_URIS_EQUAL = SecurityConfig.PUBLIC_URIS_EQUAL;
+    public static final List<String> PUBLIC_URIS_START = SecurityConfig.PUBLIC_URIS_START;
 
     public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService, RedisService redisService) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -36,13 +40,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.info("filter 거치는 중입니다.");
-        log.info("Received request for URI: {}", request.getRequestURI());
+        log.debug("filter 거치는 중입니다.");
+        log.debug("Received request for URI: {}", request.getRequestURI());
 
         // login 또는 회원가입이라면 filter를 수행하지 않고 넘김
-        if ("/login".equals(request.getRequestURI()) || "/user/serial".equals(request.getRequestURI())
-                || "/user/sign_up".equals(request.getRequestURI()) || request.getRequestURI().startsWith("/swagger-ui/")
-                || request.getRequestURI().startsWith("/api-docs") ) {
+        if (PUBLIC_URIS_EQUAL.contains(request.getRequestURI()) ||
+                PUBLIC_URIS_START.stream().anyMatch( uri -> request.getRequestURI().startsWith(uri)) ) {
+            log.info("안녕2!");
             filterChain.doFilter(request, response);
             return;
         }
