@@ -3,13 +3,13 @@ package com.smartfarm.chameleon.global.filter;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.smartfarm.chameleon.domain.login.dto.TokenDTO;
 import com.smartfarm.chameleon.global.config.SecurityConfig;
+import com.smartfarm.chameleon.global.jwt.CustomUserDetail;
 import com.smartfarm.chameleon.global.jwt.CustomUserDetailsService;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 import com.smartfarm.chameleon.global.redis.RedisService;
@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userID = jwtTokenProvider.getUserID(access_token);
 
             // 사용자 아이디를 통해 UserDetail 생성
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userID);
+            CustomUserDetail userDetails = userDetailsService.loadUserByUsername(userID);
 
             if(userDetails != null){
 
