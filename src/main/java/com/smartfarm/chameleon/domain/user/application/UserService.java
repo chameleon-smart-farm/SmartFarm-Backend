@@ -27,20 +27,22 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-
     /**
-     * 사용자 정보 : 이름, 관심 작물, 아이디 정보 반환
-     * access_token에서 사용자 아이디를 가져와 DB에서 정보 찾기
+     * 사용자 아이디, 사용자 이름, 사용자 관심 작물을
+     * UserDTO에 저장해 반환
      * 
-     * @param access_token
-     * @return
+     * @param USER_ID : 사용자 아이디
+     * @param USER_NAME : 사용자 이름
+     * @param USER_FAW_CROP : 사용자 관심 작물
+     * @return : 위의 항목이 담긴 UserDTO 반환
      */
-    public UserDTO read_user(String access_token){
+    public UserDTO read_user(String USER_ID, String USER_NAME, String USER_FAW_CROP){
 
-        // 사용자 아이디
-        String user_id = jwtTokenProvider.getUserID(access_token);
-
-        return userMapper.read_user(user_id);
+        return UserDTO.builder()
+                        .user_id(USER_ID)
+                        .user_name(USER_NAME)
+                        .faw_crop(USER_FAW_CROP)
+                        .build();
     }
 
     /**

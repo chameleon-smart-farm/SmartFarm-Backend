@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,11 +33,14 @@ public class UserController {
 
     @GetMapping("/info")
     @Operation(summary = "사용자 정보 반환" , description = "이름, 관심 작물, 아이디 정보를 반환하는 API")
-    public ResponseEntity<UserDTO> read_user(@RequestHeader("Authorization") String access_token) {
+    public ResponseEntity<UserDTO> read_user(@AuthenticationPrincipal(expression = "ID") String USER_ID,
+                                                @AuthenticationPrincipal(expression = "NAME") String USER_NAME,
+                                                @AuthenticationPrincipal(expression = "FAW_CROP") String USER_FAW_CROP) {
 
         log.info("UserController : 사용자 정보 반환 API");
+        log.debug("user_id : " + USER_ID);
 
-        return new ResponseEntity<>(userService.read_user(access_token.substring(7)), HttpStatus.OK);
+        return new ResponseEntity<>(userService.read_user(USER_ID, USER_NAME, USER_FAW_CROP), HttpStatus.OK);
     }
 
     @PutMapping("/update")
