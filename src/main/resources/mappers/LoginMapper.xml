@@ -9,7 +9,7 @@
         resultType="com.smartfarm.chameleon.domain.login.dto.UserDTO">
 
         SELECT 
-            user_id, user_pwd, user_name
+            *
         FROM 
             user
         WHERE 

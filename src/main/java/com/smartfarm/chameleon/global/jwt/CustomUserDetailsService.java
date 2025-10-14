@@ -3,11 +3,8 @@ package com.smartfarm.chameleon.global.jwt;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.smartfarm.chameleon.domain.login.dao.LoginMapper;
@@ -22,16 +19,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private LoginMapper loginMapper;
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
-
     @Override
-    public UserDetails loadUserByUsername(String userID) throws UsernameNotFoundException {
+    public CustomUserDetail loadUserByUsername(String user_id) throws UsernameNotFoundException {
         
-        UserDTO user_info = new UserDTO();
-        user_info.setUser_id(userID);
-
-        UserDTO user = loginMapper.login(user_info);
+        UserDTO user = loginMapper.login(UserDTO.builder().user_id(user_id).build());
 
         return Optional.ofNullable(user)
                     .map(this::createUserDetails)
@@ -40,19 +31,21 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     /**
-     * 사용자 이름과 비밀번호를 저장한 User 객체를 반환
-     * ! 사용자 이름과 비밀번호는 필수 값임!
+     * 사용자 DB pk(Id), 사용자 아이디(User_id), 
+     * 사용자 이름(user_name), 사용자 관심 작물(user_faw_crop)
+     * 을 저장한 CustomUserDetails를 반환한다.
      * 
-     * @param user : DB에서 찾아온 User 정보
-     * @return
+     * @param user : LoginMapper에서 가져온 UserDTO 객체
+     * @return : 위의 항목이 담긴 CustomUserDetail 반환
      */
-    private UserDetails createUserDetails(UserDTO user){
+    private CustomUserDetail createUserDetails(UserDTO user){
 
-        return User.builder()
-                    .username(user.getUser_name())
-                    .password(encoder.encode(user.getUser_pwd()))
-                    .build();
+        return CustomUserDetail.builder()
+                                .ID(user.getUser_id())
+                                .PK(user.getId())
+                                .NAME(user.getUser_name())
+                                .FAW_CROP(user.getFaw_crop())
+                                .AUTHORITY("general")
+                                .build();
     }
-
-    
 }

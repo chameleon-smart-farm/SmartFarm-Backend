@@ -71,7 +71,7 @@ public class JwtTokenProvider {
                         .getBody();
 
             log.info("token 만료시간 : " + claims.getExpiration());
-            log.info("token 검증 결과 : " + claims.getExpiration().before(new Date()));
+            log.info("token 검증 결과 : " + !claims.getExpiration().before(new Date()));
             
             return !claims.getExpiration().before(new Date());
 
