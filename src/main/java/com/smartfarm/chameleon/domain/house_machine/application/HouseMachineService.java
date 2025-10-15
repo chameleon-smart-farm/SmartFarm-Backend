@@ -20,13 +20,18 @@ public class HouseMachineService {
     @Autowired
     private HouseMapper houseMapper;
 
-    // 농장 서버에 모터 상태를 조회 요청을 보내는 메서드
+    /**
+     * 농장 서버에 모터 상태를 조회 요청을 보내는 메서드
+     * 
+     * @param house_id
+     * @return
+     */
     public HouseMachineDTO get_motor_status(int house_id){
 
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String get_url = houseMapper.read_back_url(house_id) + "/house_machine/motor/status";
 
-        // get 요청
+        // get 요청 - 모터 상태
         JSONObject res_result = (JSONObject) httpHouse.get_http_connection(get_url).get();
 
         // 결과 생성
@@ -39,13 +44,18 @@ public class HouseMachineService {
         return result;
     }
     
-    // PLC에 모터 on/off 요청을 보내는 메서드
+    /**
+     * 농장 서버에 모터 on/off 요청을 보내는 메서드
+     * 
+     * @param house_id
+     * @param status
+     */
     public void motor_on_off(int house_id, HouseMachineDTO status){
 
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String post_url = houseMapper.read_back_url(house_id) + "/house_machine/motor/on_off";
 
-        // post 요청
+        // post 요청 - 모터 on/off
         httpHouse.post_http_connection(post_url, status);
 
     }
