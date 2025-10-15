@@ -37,7 +37,7 @@ public class LoginController {
     @Operation(summary = "로그인" , description = "사용자 아이디, 비밀번호를 받고 Access Token, Refresh Token을 반환하는 API")
     public ResponseEntity<TokenDTO> login(@RequestBody UserDTO userDTO ) {
 
-        log.info("LoginController : 로그인 api");
+        log.info("LoginController : 로그인 API");
 
         Optional<TokenDTO> token = loginService.login(userDTO);
 
@@ -57,7 +57,7 @@ public class LoginController {
     @Operation(summary = "로그아웃" , description = "Redis에서 Refresh Token 삭제")
     public void logout(@AuthenticationPrincipal(expression = "ID") String USER_ID) {
     
-        log.info("LoginController : 로그아웃 api");
+        log.info("LoginController : 로그아웃 API");
 
         loginService.logout(USER_ID);
 
@@ -67,7 +67,7 @@ public class LoginController {
     @Operation(summary = "사용자 이름 조회" , description = "SecurityContext에 저장돼 있는 사용자 이름 반환")
     public ResponseEntity<String> get_name(@AuthenticationPrincipal(expression = "NAME") String USER_NAME) {
 
-        log.info("LoginController : 사용자 이름 조회 api");
+        log.info("LoginController : 사용자 이름 조회 API");
 
         return new ResponseEntity<>(USER_NAME, HttpStatus.OK);
     }
