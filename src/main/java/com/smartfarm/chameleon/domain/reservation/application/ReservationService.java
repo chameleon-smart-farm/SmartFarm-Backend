@@ -25,13 +25,18 @@ public class ReservationService {
     @Autowired
     private HttpHouse httpHouse;
 
-    // 예약 정보 리스트 조회
+    /**
+     * 예약 정보 리스트 조회
+     * 
+     * @param house_id
+     * @return
+     */
     public List<ReservationDTO> read_reservation_list(int house_id){
 
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String get_url = houseMapper.read_back_url(house_id) + "/reservation/list";
 
-        // get 요청
+        // get 요청 - 예약 리스트
         JSONArray res_result = (JSONArray) httpHouse.get_http_connection(get_url).get();
 
         // 결과를 담을 List
@@ -61,13 +66,19 @@ public class ReservationService {
 
     }
 
-    // 예약 정보 단일 조회
+    /**
+     * 예약 정보 단일 조회
+     * 
+     * @param house_id
+     * @param reservation_id
+     * @return
+     */
     public ReservationDTO read_reservation(int house_id, int reservation_id){
 
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String get_url = houseMapper.read_back_url(house_id) + "/reservation/" + reservation_id;
 
-        // get 요청
+        // get 요청 - 예약 단일 정보
         JSONObject res_result = (JSONObject) httpHouse.get_http_connection(get_url).get();
        
         // 결과 생성
@@ -80,35 +91,50 @@ public class ReservationService {
         return result;
     }
 
-    // 예약 정보 DB에 저장
+    /**
+     * 예약 정보 DB에 저장
+     * 
+     * @param house_id
+     * @param reservationDTO
+     */
     public void create_reservation(int house_id, ReservationDTO reservationDTO){
         
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String post_url = houseMapper.read_back_url(house_id) + "/reservation/insert"; 
 
-        // post 요청
+        // post 요청 - 예약 입력
         httpHouse.post_http_connection(post_url, reservationDTO);
 
     }
 
-    // 예약 정보 업데이트
+    /**
+     * 예약 정보 업데이트
+     * 
+     * @param house_id
+     * @param reservationDTO
+     */
     public void update_reservation(int house_id, ReservationDTO reservationDTO){
         
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String put_url = houseMapper.read_back_url(house_id) + "/reservation/update"; 
 
-        // post 요청
+        // post 요청 - 예약 정보 수정
         httpHouse.put_http_connection(put_url, reservationDTO);
 
     }
 
-    // 예약 정보 삭제
+    /**
+     * 예약 정보 삭제
+     * 
+     * @param house_id
+     * @param reservation_id
+     */
     public void delete_reservation(int house_id, int reservation_id){
 
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String del_url = houseMapper.read_back_url(house_id) + "/reservation/delete/" + reservation_id;
 
-        // del 요청
+        // del 요청 - 예약 정보 삭제
         httpHouse.delete_http_connection(del_url);
         
     }
