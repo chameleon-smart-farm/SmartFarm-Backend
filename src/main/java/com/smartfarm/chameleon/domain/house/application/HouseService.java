@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
 import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
 import com.smartfarm.chameleon.domain.house.dto.UserHouseDTO;
-import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 import com.smartfarm.chameleon.global.toHouse.HttpHouse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,22 +25,21 @@ public class HouseService {
     private HouseMapper houseMapper;
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
     private HttpHouse httpHouse;
     
-    // 농장 정보 조회
+    /**
+     * 농장 정보(농장 아이디, 농장 이름, 키우는 작물, 주소) 조회
+     * 사용자 pk로 농장 아이디, 농장 이름, 농장 백엔드 주소를 받아온 후
+     * 농장 서버에 요청을 보낸다.
+     * 
+     * @param user_pk
+     * @return : 농장 정보(농장 아이디, 농장 이름, 키우는 작물, 주소)가 저장된 List 반환
+     */
     @Cacheable(value = "read_house_info")
-    public List<HouseInfoDTO> read_house(String access_token){
+    public List<HouseInfoDTO> read_house(int user_pk){
 
-        // 사용자 아이디
-        String user_id = jwtTokenProvider.getUserID(access_token);
-        // 사용자 index id 받아오기
-        int id = houseMapper.read_index(user_id);
-
-        // 사용자 index id로 농장 아이디, 농장 이름, 농장 백엔드 주소 받아오기
-        List<UserHouseDTO> url_list = houseMapper.read_back_url_list(id);
+        // 사용자 pk로 농장 아이디, 농장 이름, 농장 백엔드 주소가 담긴 List 받아오기
+        List<UserHouseDTO> url_list = houseMapper.read_back_url_list(user_pk);
 
         // 결과를 담을 List
         List<HouseInfoDTO> result = new ArrayList<>();
@@ -60,7 +58,7 @@ public class HouseService {
             info_result.setHouse_crop(house_result.get("house_crop").toString());
             info_result.setHouse_add(house_result.get("house_add").toString());
 
-            log.info("농장 정보 조회 서비스 결과 : " + info_result.toString());
+            log.info("HouseService : 농장 정보 조회 서비스 결과 : " + info_result.toString());
 
             // 결과 리스트에 객체 추가
             result.add(info_result);
@@ -76,19 +74,25 @@ public class HouseService {
         
     }
 
-    // 사용자 index id로 사용자가 보유한 농장 이름 리스트 반환
+    /**
+     * 사용자 pk로 사용자가 보유한 농장 이름 리스트 반환
+     * 
+     * @param user_pk
+     * @return : 농장 이름 List 반환
+     */
     @Cacheable(value = "read_house_name_list")
-    public List<HouseInfoDTO> read_house_name_list(String access_token){
+    public List<HouseInfoDTO> read_house_name_list(int user_pk){
 
-        // 사용자 아이디
-        String user_id = jwtTokenProvider.getUserID(access_token);
-        // 사용자 index id 받아오기
-        int id = houseMapper.read_index(user_id);
-
-        return houseMapper.read_house_name_list(id);
+        return houseMapper.read_house_name_list(user_pk);
     }
 
-    // 농장 아이디로 농장 이름과 키우는 작물 수정
+    /**
+     * 농장 아이디로 농장 이름과 키우는 작물 수정
+     * 농장 이름 변경은 회사 서버에서 수행
+     * 농장의 키우는 작물은 농장 서버에서 수행
+     * 
+     * @param houseInfoDto
+     */
     @CacheEvict(value = {"read_house_name_list", "read_house_info"})
     @Transactional
     public void update_house_name(HouseInfoDTO houseInfoDto){
@@ -99,7 +103,7 @@ public class HouseService {
         // 농장 아이디로 농장의 백엔드 주소 가져오기
         String put_url = houseMapper.read_back_url(houseInfoDto.getHouse_id()) + "/house/update";
 
-        // put 요청
+        // put 요청 - 키우는 작물 수정
         httpHouse.put_http_connection(put_url, houseInfoDto);
 
     }
