@@ -46,8 +46,7 @@ public class LoginService {
         UserDTO user = loginMapper.login(userDTO);
 
         if(user == null){
-            log.error("사용자 아이디가 존재하지 않습니다.");
-
+            log.error("LoginService : 사용자 아이디가 존재하지 않습니다.");
             return Optional.empty();
         }
 
@@ -63,32 +62,17 @@ public class LoginService {
             return Optional.of(token);
 
         }else{
-            log.error("사용자 비밀번호가 일치하지 않습니다.");
+            log.error("LoginService : 사용자 비밀번호가 일치하지 않습니다.");
+            return Optional.empty();
         }
-
-        return Optional.empty();
-    }
-
-    /**
-     * Access Token에서 ID를 받아오고 DB에서 이 ID를 통해 이름을 반환받는다.
-     * 
-     * @param access_token
-     * @return
-     */
-    public String get_name(String access_token){
-
-        return loginMapper.read_user_name(jwtTokenProvider.getUserID(access_token));
     }
 
     /**
      * redis에서 사용자 아이디를 key로 refresh_token을 삭제한다.
      * 
-     * @param access_token : header에 있던 access_token
+     * @param user_id : 사용자 아이디
      */
-    public void logout (String access_token) {
-
-        // 사용자 아이디
-        String user_id = jwtTokenProvider.getUserID(access_token);
+    public void logout (String user_id) {
 
         // 사용자 아이디를 key로 redis에서 refresh_token 삭제
         redisService.deleteData(user_id);
