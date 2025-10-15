@@ -27,8 +27,15 @@ public class HouseStatusService {
     @Autowired
     private HttpHouse httpHouse;
 
-    // 가장 최근에 저장된 온도 데이터와 기상청의 데이터
-    // 가장 최근 3시간의 평균 온도 데이터 리스트를 함께 반환
+    /**
+     * 농장 서버에 요청을 보내 아래의 데이터를 반환
+     * 
+     * 가장 최근에 저장된 온도 데이터와 기상청의 온도 데이터,
+     * 가장 최근 3시간의 평균 온도 데이터 리스트를 함께 반환
+     * 
+     * @param house_id
+     * @return
+     */
     @Cacheable(value = "get_tem_data")
     public TemDTO get_tem_data(int house_id){
 
@@ -73,11 +80,16 @@ public class HouseStatusService {
 
     }
 
-    // 농장 아이디로 농장의 기상청 데이터 온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 받아옴
+    /**
+     * 농장 아이디로 현재 시간을 기준으로
+     * 농장의 기상청 데이터 - 온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 받아옴
+     * 
+     * @param house_id
+     * @param cur_time
+     * @return
+     */
     @Cacheable(value = "read_weather_info", key ="#p0 + #p1")
     public HouseWeatherDTO read_weather_info(int house_id, String cur_time){
-
-        // delete_cache();
 
         log.info("read_weather_info 메서드 실행");
 

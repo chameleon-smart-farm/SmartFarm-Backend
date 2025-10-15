@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -30,14 +29,17 @@ public class HouseMachineController {
     private HouseMachineService houseMachineService;
 
     @GetMapping("/motor/status/{house_id}")
-    public ResponseEntity<HouseMachineDTO> get_motor_status(@RequestHeader("Authorization") String access_token, @PathVariable("house_id") int house_id) {
+    @Operation(summary = "모터 상태 반환", description = "모터 상태를 반환하는 API")
+    public ResponseEntity<HouseMachineDTO> get_motor_status(@PathVariable("house_id") int house_id) {
+        log.info("HouseMachineController : 모터 상태 반환 API");
         return new ResponseEntity<>(houseMachineService.get_motor_status(house_id), HttpStatus.OK);
     }
     
 
     @PostMapping("/motor/on_off/{house_id}")
-    @Operation(summary = "모터 동작 API", description = "status 값에 따라 모터를 ON/OFF 하는 API")
-    public void motor_on_off(@RequestHeader("Authorization") String access_token, @PathVariable("house_id") int house_id, @RequestBody HouseMachineDTO status) {
+    @Operation(summary = "모터 동작", description = "status 값에 따라 모터를 ON/OFF 하는 API")
+    public void motor_on_off(@PathVariable("house_id") int house_id, @RequestBody HouseMachineDTO status) {
+        log.info("HouseMachineController : 모터 동작 API");
         houseMachineService.motor_on_off(house_id, status);
     }
     

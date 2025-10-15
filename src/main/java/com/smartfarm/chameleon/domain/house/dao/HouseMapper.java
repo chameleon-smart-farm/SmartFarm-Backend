@@ -9,14 +9,11 @@ import com.smartfarm.chameleon.domain.house.dto.UserHouseDTO;
 
 @Mapper
 public interface HouseMapper {
-    
-    // 사용자 아이디로 사용자 index id 받아오기
-    public int read_index(String user_id);
 
-    // 사용자 index id로 농장 아이디, 농장 백엔드 주소 받아오기
+    // 사용자 pk로 농장 아이디, 농장 백엔드 주소 받아오기
     public List<UserHouseDTO> read_back_url_list(int id);
 
-    // 사용자 index id로 사용자가 보유한 농장 이름 리스트 반환
+    // 사용자 pk로 사용자가 보유한 농장 이름 리스트 반환
     public List<HouseInfoDTO> read_house_name_list(int id);
 
     // 농장 아이디로 농장 이름 변경
