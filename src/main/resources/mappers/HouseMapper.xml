@@ -3,17 +3,7 @@
 
 <mapper namespace="com.smartfarm.chameleon.domain.house.dao.HouseMapper">
 
-    <!-- 사용자 아이디로 사용자 index id 받아오기 -->
-    <select id="read_index"
-        resultType="java.lang.Integer">
-
-        SELECT  id
-        FROM    user
-        WHERE   user_id = #{user_id}
-
-    </select>
-
-    <!-- 사용자 index id로 농장 아이디, 농장 백엔드 주소 받아오기 -->
+    <!-- 사용자 pk로 농장 아이디, 농장 백엔드 주소 받아오기 -->
     <select id="read_back_url_list"
         parameterType="java.lang.Integer"
         resultType="com.smartfarm.chameleon.domain.house.dto.UserHouseDTO">
@@ -24,7 +14,7 @@
 
     </select>
 
-    <!-- 사용자 index id로 사용자가 보유한 농장 이름 리스트 반환 -->
+    <!-- 사용자 pk로 사용자가 보유한 농장 이름 리스트 반환 -->
     <select id="read_house_name_list"
         parameterType="java.lang.Integer"
         resultType="com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO">

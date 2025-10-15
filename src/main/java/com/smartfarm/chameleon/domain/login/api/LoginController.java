@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -36,41 +37,39 @@ public class LoginController {
     @Operation(summary = "로그인" , description = "사용자 아이디, 비밀번호를 받고 Access Token, Refresh Token을 반환하는 API")
     public ResponseEntity<TokenDTO> login(@RequestBody UserDTO userDTO ) {
 
-        log.info("login api");
+        log.info("LoginController : 로그인 API");
 
         Optional<TokenDTO> token = loginService.login(userDTO);
-        
+
         if(token.isPresent()){
 
-            log.info("로그인 성공!");
-
+            log.info("LoginController : 로그인 성공");
             return new ResponseEntity<>(token.get(), HttpStatus.OK);
         }else{
 
-            log.info("로그인 실패..!");
-
-            return new ResponseEntity<>(null);
+            log.info("LoginController : 로그인 실패");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
 
     @GetMapping("/api/logout")
     @Operation(summary = "로그아웃" , description = "Redis에서 Refresh Token 삭제")
-    public void logout(@RequestHeader("Authorization") String access_token) {
+    public void logout(@AuthenticationPrincipal(expression = "ID") String USER_ID) {
     
-        log.info("logout api");
+        log.info("LoginController : 로그아웃 API");
 
-        loginService.logout(access_token.substring(7));
+        loginService.logout(USER_ID);
 
     }
 
     @GetMapping("/get_name")
-    @Operation(summary = "사용자 이름 조회" , description = "access_token에서 얻은 사용자 아이디로 DB에서 사용자 이름 조회")
-    public ResponseEntity<String> get_name(@RequestHeader("Authorization") String access_token) {
+    @Operation(summary = "사용자 이름 조회" , description = "SecurityContext에 저장돼 있는 사용자 이름 반환")
+    public ResponseEntity<String> get_name(@AuthenticationPrincipal(expression = "NAME") String USER_NAME) {
 
-        log.info("get_name api");
+        log.info("LoginController : 사용자 이름 조회 API");
 
-        return new ResponseEntity<>(loginService.get_name(access_token.substring(7)), HttpStatus.OK);
+        return new ResponseEntity<>(USER_NAME, HttpStatus.OK);
     }
     
 
