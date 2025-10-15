@@ -10,16 +10,12 @@ import com.smartfarm.chameleon.domain.house.dto.HouseInfoDTO;
 import com.smartfarm.chameleon.domain.login.dto.UserDTO;
 import com.smartfarm.chameleon.domain.user.dao.UserMapper;
 import com.smartfarm.chameleon.domain.user.dto.SignUpDTO;
-import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 
 @Service
 public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private HouseService houseService;
@@ -47,16 +43,14 @@ public class UserService {
 
     /**
      * 사용자 이름, 관심 작물 수정
-     * access_token에서 사용자 아이디를 가져와 userDTO에 추가
+     * SecurityContext에 저장된 user_pk를 userDTO에 저장
      * 
-     * @param access_token
-     * @param userDTO : 사용자의 수정 정보 저장
+     * @param user_pk
+     * @param userDTO
      */
-    public void update_user(String access_token, UserDTO userDTO){
+    public void update_user(int user_pk, UserDTO userDTO){
         
-        // 사용자 아이디
-        String user_id = jwtTokenProvider.getUserID(access_token);
-        userDTO.setUser_id(user_id);
+        userDTO.setId(user_pk);
 
         userMapper.update_user(userDTO);
     }
