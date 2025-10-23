@@ -74,9 +74,9 @@ public class LoginController {
     
 
     @GetMapping("/test")
-    public void test(@RequestHeader("Authorization") String access_token, @RequestHeader("REFRESH_TOKEN") String refresh_token) {
+    public void test(@RequestHeader("REFRESH_TOKEN") String refresh_token) {
         
-        log.info("Access Token : " + access_token + ", Refresh Token : " + refresh_token);
+        log.info("Refresh Token : {}", refresh_token);
 
     }
     
