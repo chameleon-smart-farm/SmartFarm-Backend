@@ -50,19 +50,23 @@ public class LoginService {
             return Optional.empty();
         }
 
-        if(encoder.matches(userDTO.getUser_pwd(), user.getUser_pwd())){
+        try {
+            if(encoder.matches(userDTO.getUser_pwd(), user.getUser_pwd())){
 
-            // token 생성 후 반환
-            TokenDTO token = jwtTokenProvider.createAccessToken(user.getUser_id());
-            
-            // redis에 refresh token 저장
-            long expiration = jwtTokenProvider.getExpiration(token.getRefresh_token()).getTime();
-            redisService.setData(user.getUser_id(), token.getRefresh_token(), expiration );
-
-            return Optional.of(token);
-
-        }else{
-            log.error("LoginService : 사용자 비밀번호가 일치하지 않습니다.");
+                // token 생성 후 반환
+                TokenDTO token = jwtTokenProvider.createAccessToken(user.getUser_id());
+                
+                // redis에 refresh token 저장
+                long expiration = jwtTokenProvider.getExpiration(token.getRefresh_token()).getTime();
+                redisService.setData(user.getUser_id(), token.getRefresh_token(), expiration );
+                
+                return Optional.of(token);
+    
+            }else{
+                log.error("LoginService : 사용자 비밀번호가 일치하지 않습니다.");
+                return Optional.empty();
+            }
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
