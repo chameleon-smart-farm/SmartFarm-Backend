@@ -7,6 +7,8 @@ import com.smartfarm.chameleon.domain.login.dto.UserDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
@@ -17,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -35,7 +36,7 @@ public class LoginController {
 
     @PostMapping("/login")
     @Operation(summary = "로그인" , description = "사용자 아이디, 비밀번호를 받고 Access Token, Refresh Token을 반환하는 API")
-    public ResponseEntity<TokenDTO> login(@RequestBody UserDTO userDTO ) {
+    public ResponseEntity<TokenDTO> login(@RequestBody UserDTO userDTO, HttpServletResponse response ) {
 
         log.info("LoginController : 로그인 API");
 
@@ -44,6 +45,19 @@ public class LoginController {
         if(token.isPresent()){
 
             log.info("LoginController : 로그인 성공");
+
+            // refresh token은 쿠키에 담아서 response에 추가
+            Cookie cookie = new Cookie("REFRESH_TOKEN", token.get().getRefresh_token());
+            cookie.setPath("/");                 // 모든 경로에서 접근 가능
+            cookie.setHttpOnly(true);       // JavaScript에서 접근 불가
+            
+            // cookie.setSecure(true);             // HTTPS 통신에서만 전송
+            cookie.setMaxAge(7 * 24 * 60 * 60);      // 유효기간 7일
+            response.addCookie(cookie);
+
+            // 기존의 TokenDTO에서 refresh_token 제거
+            token.get().setRefresh_token(null);
+
             return new ResponseEntity<>(token.get(), HttpStatus.OK);
         }else{
 
@@ -74,9 +88,9 @@ public class LoginController {
     
 
     @GetMapping("/test")
-    public void test(@RequestHeader("REFRESH_TOKEN") String refresh_token) {
+    public void test() {
         
-        log.info("Refresh Token : {}", refresh_token);
+        log.info("server loading test");
 
     }
     
