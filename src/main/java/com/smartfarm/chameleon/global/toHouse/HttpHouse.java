@@ -80,8 +80,8 @@ public class HttpHouse {
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return Optional.empty();
+            log.error("HttpHouse - " + e);
+            throw new RuntimeException(e);
         }
 
     }
@@ -131,7 +131,8 @@ public class HttpHouse {
             log.info("HTTPHouse 결과 : " + str_result);
             
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("HttpHouse - " + e);
+            throw new RuntimeException(e);
         }
 
 
@@ -184,7 +185,8 @@ public class HttpHouse {
             log.info("HTTPHouse 결과 : " + str_result);
             
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("HttpHouse - " + e);
+            throw new RuntimeException(e);
         }
 
     }
@@ -228,7 +230,8 @@ public class HttpHouse {
 
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("HttpHouse - " + e);
+            throw new RuntimeException(e);
         }
 
     }
