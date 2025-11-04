@@ -113,7 +113,7 @@ public class JwtTokenProvider {
     }
 
     // 유효기간 반환
-    public Date getExpiration(String token) throws Exception{
+    public Date getExpiration(String token){
         
        try {
             Date expiration = Jwts.parser()
@@ -125,8 +125,8 @@ public class JwtTokenProvider {
             return expiration;  
 
        } catch (Exception e) {
-        log.info("JwtTokenProvider - getExpiration : {} : {}", e.getClass() , e.getMessage());
-            throw new Exception("잘못된 token입니다.");
+            log.info("JwtTokenProvider - getExpiration : {} : {}", e.getClass() , e.getMessage());
+            throw new RuntimeException(new Exception("잘못된 token입니다."));
        }
     }
 
