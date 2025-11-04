@@ -16,6 +16,7 @@ import com.smartfarm.chameleon.global.redis.RedisService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -82,9 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // Security Context에 저장            
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    log.info("JwtAuthenticationFilter : next filter");
-                    // 다음 필터로 넘기기
-                    filterChain.doFilter(request, response);    
+                    log.info("JwtAuthenticationFilter : next filter");                    
                 }
 
             }else{
@@ -107,6 +106,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                         log.info("JwtAuthenticationFilter : 새로운 access_token이 발급되었습니다.");
                         sendToClient(response, new_access_token.getAccess_token(), false);
+                        return;
 
                     }else{
                         // 토큰이 만료되었을 경우
@@ -118,7 +118,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             sendToClient(response, e.getMessage(), true);
+            return;
         }
+
+        // 다음 필터로 넘기기
+        filterChain.doFilter(request, response); 
                 
     }
 
@@ -165,15 +169,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // header에서 refresh_token 불러오기
+    // private String resolveRefreshToken(HttpServletRequest request){
+
+    //     // bearer이 붙어있는 token
+    //     String bearerToken = request.getHeader("REFRESH_TOKEN");
+
+    //     // bearer값을 제외한 token값만을 전달
+    //     if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+    //         return bearerToken.substring(7);
+    //     }
+    //     return null;
+    // }
+
+    // header의 쿠키에서 refresh_token 불러오기
     private String resolveRefreshToken(HttpServletRequest request){
 
-        // bearer이 붙어있는 token
-        String bearerToken = request.getHeader("REFRESH_TOKEN");
+        // 쿠키 배열
+        Cookie[] cookies = request.getCookies();
 
-        // bearer값을 제외한 token값만을 전달
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+		if(cookies != null){
+            for(Cookie cookie : cookies) {
+                if("REFRESH_TOKEN".equals(cookie.getName())) {
+                    // log.info("JwtAuthenticationFilter - resolveRefreshToken / refresh token : {}", cookie.getValue());
+                    return cookie.getValue();
+                }
+            }
         }
+
         return null;
     }
     
