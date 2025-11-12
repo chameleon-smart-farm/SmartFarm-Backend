@@ -19,8 +19,8 @@ services:
       LOGSTASH_HOST: clone-docker-elk_logstash_1
       KEYSTORE_PASSWORD : ${JENKINS_KEYSTORE_PASSWORD}
     volumes:
-      /home/ubuntu/keystore.p12:/etc/ssl/keystore.p12
-    # restart : always
+      - /home/ubuntu/keystore.p12:/etc/ssl/keystore.p12
+    restart : always
     # server 기동하다가 문제가 발생하면 container를 다시 실행한다.
 
   # redis 등록
