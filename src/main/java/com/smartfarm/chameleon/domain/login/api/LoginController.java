@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,13 +48,23 @@ public class LoginController {
             log.info("LoginController : 로그인 성공");
 
             // refresh token은 쿠키에 담아서 response에 추가
-            Cookie cookie = new Cookie("REFRESH_TOKEN", token.get().getRefresh_token());
-            cookie.setPath("/");                 // 모든 경로에서 접근 가능
-            cookie.setHttpOnly(true);       // JavaScript에서 접근 불가
-            
+            // Cookie cookie = new Cookie("REFRESH_TOKEN", token.get().getRefresh_token());
+            // cookie.setPath("/");                 // 모든 경로에서 접근 가능
+            // cookie.setHttpOnly(true);       // JavaScript에서 접근 불가
+            // cookie.set
             // cookie.setSecure(true);             // HTTPS 통신에서만 전송
-            cookie.setMaxAge(7 * 24 * 60 * 60);      // 유효기간 7일
-            response.addCookie(cookie);
+            // cookie.setMaxAge(7 * 24 * 60 * 60);      // 유효기간 7일
+            // response.addCookie(cookie);
+
+            ResponseCookie cookie = ResponseCookie.from("REFRESH_TOKEN", token.get().getRefresh_token())
+                                                .path("/")
+                                                .httpOnly(true)
+                                                // .sameSite("Strict")
+                                                .secure(true)
+                                                .maxAge(7 * 24 * 60 * 60)
+                                                .build();
+
+            response.addHeader("Set-Cookie", cookie.toString());
 
             // 기존의 TokenDTO에서 refresh_token 제거
             token.get().setRefresh_token(null);
