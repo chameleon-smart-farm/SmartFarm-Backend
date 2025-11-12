@@ -3,6 +3,9 @@ package com.smartfarm.chameleon.global.exception;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +30,7 @@ public class GlobalExceptionHandler  {
 
     @ExceptionHandler(MalformedURLException.class)
     public ResponseEntity<String> handleMalformedURLException(MalformedURLException e){
-        log.error(" : MalformedURLException 발생");
+        log.error("GlobalExceptionHandler : MalformedURLException 발생");
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -36,11 +39,29 @@ public class GlobalExceptionHandler  {
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleIOException(IOException e){
-        log.error(" : IOException 발생");
+        log.error("GlobalExceptionHandler : IOException 발생");
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("처리 과정 중 오류가 발생했습니다. 요청을 다시 확인해 주세요.");
+    }
+
+    @ExceptionHandler(SSLHandshakeException.class)
+    public ResponseEntity<String> handleSSLHandshakeException(SSLHandshakeException e){
+        log.error("GlobalExceptionHandler : SSLHandshakeException 발생");
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("인증되지 않은 사용자입니다. 요청을 거절합니다.");
+    }
+
+    @ExceptionHandler(SSLPeerUnverifiedException.class)
+    public ResponseEntity<String> handleSSLPeerUnverifiedException(SSLPeerUnverifiedException e){
+        log.error("GlobalExceptionHandler : SSLPeerUnverifiedException 발생");
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("인증되지 않은 사용자입니다. 요청을 거절합니다.");
     }
     
 }
