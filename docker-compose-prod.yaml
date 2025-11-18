@@ -18,6 +18,7 @@ services:
     environment:
       LOGSTASH_HOST: clone-docker-elk_logstash_1
       KEYSTORE_PASSWORD : ${JENKINS_KEYSTORE_PASSWORD}
+      MARIADB_PASSWORD : ${JENKINS_MARIADB_PASSWORD}
     volumes:
       - /home/ubuntu/keystore.p12:/etc/ssl/keystore.p12
     restart : always
