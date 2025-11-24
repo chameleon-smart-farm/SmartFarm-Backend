@@ -2,12 +2,12 @@ package com.smartfarm.chameleon.domain.login.api;
 
 import org.springframework.web.bind.annotation.RestController;
 import com.smartfarm.chameleon.domain.login.application.LoginService;
+import com.smartfarm.chameleon.domain.login.dto.FCMTokenDTO;
 import com.smartfarm.chameleon.domain.login.dto.TokenDTO;
 import com.smartfarm.chameleon.domain.login.dto.UserDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +21,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 
@@ -95,6 +97,16 @@ public class LoginController {
         log.info("LoginController : 사용자 이름 조회 API");
 
         return new ResponseEntity<>(USER_NAME, HttpStatus.OK);
+    }
+
+    @PutMapping("/fcm")
+    @Operation(summary = "사용자 fcm_token 등록" , description = "사용자 기기별 token을 저장, 사용자와 기기는 1:1 관계")
+    public void update_device_token(@AuthenticationPrincipal(expression = "ID") String USER_ID, @RequestBody FCMTokenDTO fcm_data) {
+        
+        log.info("LoginController : 사용자 fcm_token 등록 API");
+
+        fcm_data.setUser_id(USER_ID);
+        loginService.update_device_token(fcm_data);
     }
     
 
