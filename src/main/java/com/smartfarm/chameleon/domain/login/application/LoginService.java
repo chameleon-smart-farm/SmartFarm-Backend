@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.smartfarm.chameleon.domain.login.dao.LoginMapper;
 import com.smartfarm.chameleon.domain.login.dto.UserDTO;
+import com.smartfarm.chameleon.domain.login.dto.FCMTokenDTO;
 import com.smartfarm.chameleon.domain.login.dto.TokenDTO;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 import com.smartfarm.chameleon.global.redis.RedisService;
@@ -77,6 +78,17 @@ public class LoginService {
         // 사용자 아이디를 key로 redis에서 refresh_token 삭제
         redisService.deleteData(user_id);
 
+    }
+
+    /**
+     * 사용자 아이디에 해당하는 user에 fcm token을 저장
+     * 추후 알림을 전송할 때 user 구분용으로 사용
+     * 
+     * @param user_id
+     * @param device_token
+     */
+    public void update_device_token(FCMTokenDTO fcm_data){
+        loginMapper.update_device_token(fcm_data);
     }
     
 }
