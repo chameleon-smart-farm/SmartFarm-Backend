@@ -51,6 +51,9 @@ dependencies {
 	// commons 버전 높이기
 	implementation 'org.apache.commons:commons-compress:1.26.2'
 
+	// Firebase Admin
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

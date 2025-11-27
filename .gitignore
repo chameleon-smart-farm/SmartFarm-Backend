@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 
 ChameleonKey.p12
+chameleon-android-df69c-firebase-adminsdk-fbsvc-ec632eb126.json
 application.properties
 application-*.properties
 

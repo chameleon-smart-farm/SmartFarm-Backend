@@ -1,4 +1,4 @@
-package com.smartfarm.chameleon.domain.login.dto;
+package com.smartfarm.chameleon.domain.fcm.dto;
 
 import lombok.Data;
 
