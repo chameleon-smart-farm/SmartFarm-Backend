@@ -17,16 +17,4 @@
 
     </select>
 
-    <!-- 사용자 Device Token 값 추가 -->
-    <insert id="update_device_token"
-        parameterType="com.smartfarm.chameleon.domain.login.dto.FCMTokenDTO">
-
-        UPDATE user
-        SET
-            device_token = #{device_token}
-        WHERE
-            user_id = #{user_id}
-
-    </insert>
-
 </mapper>
