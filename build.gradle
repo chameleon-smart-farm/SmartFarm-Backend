@@ -54,6 +54,9 @@ dependencies {
 	// Firebase Admin
 	implementation 'com.google.firebase:firebase-admin:9.2.0'
 
+	// MQTT
+	implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
