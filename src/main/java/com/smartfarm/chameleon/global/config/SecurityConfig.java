@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import com.smartfarm.chameleon.global.filter.JwtAuthenticationFilter;
+import com.smartfarm.chameleon.global.filter.RateLimitFilter;
 import com.smartfarm.chameleon.global.jwt.CustomUserDetailsService;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 import com.smartfarm.chameleon.global.redis.RedisService;
@@ -33,6 +34,9 @@ public class SecurityConfig {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private BucketConfig bucketConfig;
 
     // 완전히 일치해야하는 URI 목록
     public static final List<String> PUBLIC_URIS_EQUAL = List.of(
@@ -56,6 +60,7 @@ public class SecurityConfig {
                                         .toArray(String[]::new)).permitAll() // 로그인 API는 인증 없이 접근 가능
                                 .anyRequest().authenticated() // 나머지는 인증 필요
                 )
+                .addFilterBefore(new RateLimitFilter(bucketConfig), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, redisService),
                         UsernamePasswordAuthenticationFilter.class)
                 .cors(withDefaults());    // cors 활성화와 동시에 WebConfig 옵션을 사용
