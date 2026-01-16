@@ -37,8 +37,8 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @Autowired
-    private Bucket bucket;
+    // @Autowired
+    // private Bucket bucket;
 
     @PostMapping("/login")
     @Operation(summary = "로그인" , description = "사용자 아이디, 비밀번호를 받고 Access Token, Refresh Token을 반환하는 API")
@@ -48,9 +48,10 @@ public class LoginController {
 
         Optional<TokenDTO> token = loginService.login(userDTO);
 
-        ConsumptionProbe use_bucket = bucket.tryConsumeAndReturnRemaining(1);
+        // ConsumptionProbe use_bucket = bucket.tryConsumeAndReturnRemaining(1);
 
-        if(token.isPresent() && use_bucket.isConsumed() ){
+        // if(token.isPresent() && use_bucket.isConsumed() ){
+        if(token.isPresent()){
 
             log.info("LoginController : 로그인 성공");
 
@@ -68,18 +69,18 @@ public class LoginController {
             token.get().setRefresh_token(null);
 
             return new ResponseEntity<>(token.get(), HttpStatus.OK);
-        }else if(token.isPresent() && !use_bucket.isConsumed()){
+        // }else if(token.isPresent() && !use_bucket.isConsumed()){
 
-            // 다음 리필까지 남은 시간(다음 초기화 시간)을 나노초에서 초로 변환
-            long nanoRateTime = use_bucket.getNanosToWaitForRefill();
-            long secondRateWait = (long) Math.ceil((double) nanoRateTime / 1_000_000_000.0);
+        //     // 다음 리필까지 남은 시간(다음 초기화 시간)을 나노초에서 초로 변환
+        //     long nanoRateTime = use_bucket.getNanosToWaitForRefill();
+        //     long secondRateWait = (long) Math.ceil((double) nanoRateTime / 1_000_000_000.0);
 
-            // 응답 헤더에 추가
-            response.addHeader("X-RateLimit-Limit", String.valueOf(60)); // 요청 제한 횟수 
-            response.addHeader("X-Ratelimit-Retry-After", String.valueOf(secondRateWait)); // 다음 요청까지 남은 시간
+        //     // 응답 헤더에 추가
+        //     response.addHeader("X-RateLimit-Limit", String.valueOf(60)); // 요청 제한 횟수 
+        //     response.addHeader("X-Ratelimit-Retry-After", String.valueOf(secondRateWait)); // 다음 요청까지 남은 시간
 
-            log.info("LoginController : 로그인 실패");
-            return new ResponseEntity<>(null, HttpStatus.TOO_MANY_REQUESTS);
+        //     log.info("LoginController : 로그인 실패");
+        //     return new ResponseEntity<>(null, HttpStatus.TOO_MANY_REQUESTS);
 
         }else{    
 

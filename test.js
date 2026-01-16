@@ -11,6 +11,7 @@ import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporte
 export const options = {
   vus: 10,
   duration: '30s',
+  insecureSkipTLSVerify: true,    // SSL 인증서 신뢰
 }
 
 
@@ -22,7 +23,7 @@ export const options = {
  */
 export function setup() {
 
-  const url = 'http://localhost:8080/login';
+  const url = 'https://localhost:8080/login';
 
   // data
   const payload = JSON.stringify({
@@ -74,7 +75,7 @@ export default function(data) {
     return;
   }
 
-  const url = "http://localhost:8080/user/info"
+  const url = "https://localhost:8080/user/info"
 
   const params = {
     headers: {
