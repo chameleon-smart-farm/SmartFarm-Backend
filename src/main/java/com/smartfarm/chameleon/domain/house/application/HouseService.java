@@ -108,4 +108,26 @@ public class HouseService {
 
     }
 
+    /**
+     *  사용자의 농장 추가
+     *  - USER_PK와 HOUSE_ID 연결
+     *  - update_house_name 호출 - 농장 아이디로 농장 이름과 키우는 작물 수정
+     */
+    @CacheEvict(value = {"read_house_name_list", "read_house_info"})
+    @Transactional
+    public void add_house(int USER_PK, HouseInfoDTO houseInfoDto){
+
+        // USER_PK와 HOSUE_ID DTO에 저장
+        UserHouseDTO userHouseDTO = new UserHouseDTO();
+        userHouseDTO.setId(Integer.toString(USER_PK));
+        userHouseDTO.setHouse_id(houseInfoDto.getHouse_id());
+
+        // USER_PK와 HOSUE_ID 연결
+        houseMapper.add_house(userHouseDTO);
+
+        // 농장 아이디로 농장 이름과 키우는 작물 수정
+        update_house_name(houseInfoDto);
+
+    }
+
 }

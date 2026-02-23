@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
+
 @Slf4j
 @RequestMapping("/house")
 @Tag(name = "농장 정보 API", description = "농장 서버에 저장되어 있는 농장 정보 조회")
@@ -50,6 +51,13 @@ public class HouseController {
     public void update_house_name(@RequestBody HouseInfoDTO houseInfoDto ) {
         log.info("HouseController : 농장 정보 수정 API ");
         houseService.update_house_name(houseInfoDto);
+    }
+
+    @PutMapping("/add_house")
+    @Operation(summary = "농장 추가" , description = "농장 아이디로 농장 이름과 키우는 작물 수정하고 USER_PK와 연결")
+    public void add_house (@AuthenticationPrincipal(expression = "PK") int USER_PK, @RequestBody HouseInfoDTO houseInfoDto ) {
+        log.info("HouseController : 농장 추가 API ");
+        houseService.add_house(USER_PK, houseInfoDto);
     }
 
 }
