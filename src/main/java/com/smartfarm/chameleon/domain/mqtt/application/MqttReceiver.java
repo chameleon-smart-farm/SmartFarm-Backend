@@ -1,5 +1,7 @@
 package com.smartfarm.chameleon.domain.mqtt.application;
 
+import java.nio.charset.StandardCharsets;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -12,59 +14,75 @@ import com.smartfarm.chameleon.domain.fcm.dto.FCMMessageDTO;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.crt.mqtt.MqttClientConnection;
+import software.amazon.awssdk.crt.mqtt.QualityOfService;
 
 @Slf4j
 @Service
-public class MqttReceiver implements MqttCallback {
-    
-    @Autowired
-    private MqttClient mqttClient;
+public class MqttReceiver  {
+    // implements MqttCallback
+    // @Autowired
+    // private MqttClient mqttClient;
 
     @Autowired
     private FCMService fcmService;
 
-    @PostConstruct
-    public void init(){
-        mqttClient.setCallback(this);
-    }
+    // @PostConstruct
+    // public void init(){
+    //     mqttClient.setCallback(this);
+    // }
     
     
-    // 연결이 끊어졌을 때 처리 로직
-    @Override
-    public void connectionLost(Throwable cause) {
+    // // 연결이 끊어졌을 때 처리 로직
+    // @Override
+    // public void connectionLost(Throwable cause) {
         
-        log.info("MqttReceiver - connectionLost : 연결이 끊어졌습니다.");
-        throw new UnsupportedOperationException("연결이 끊어졌습니다.");
-    }
+    //     log.info("MqttReceiver - connectionLost : 연결이 끊어졌습니다.");
+    //     throw new UnsupportedOperationException("연결이 끊어졌습니다.");
+    // }
+
+    @Autowired
+    private MqttClientConnection connection;
 
     // 메시지가 도착했을 때 처리 로직
-    @Override
+    // @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        log.info("MqttReceiver - messageArrived : 메시지가 도착했습니다.");
-        log.info("MqttReceiver - messageArrived : topic : {} / message : {}", topic, message);
+        // log.info("MqttReceiver - messageArrived : 메시지가 도착했습니다.");
+        // log.info("MqttReceiver - messageArrived : topic : {} / message : {}", topic, message);
 
-        FCMMessageDTO fcmMessageDTO = new FCMMessageDTO();
-        fcmMessageDTO.setBody(message.toString());
-        fcmMessageDTO.setUser_id("test");
-        fcmMessageDTO.setTitle("OPC UA에서 보내셨습니다 ^^");
+        topic = "core/topic/tolocal";
 
-        fcmService.send_message(fcmMessageDTO);
+        connection.subscribe(topic, QualityOfService.AT_LEAST_ONCE, (msg) -> {
+
+                String payload = new String(msg.getPayload(), StandardCharsets.UTF_8);
+                log.debug("MQTT - Received: " + payload);
+
+                // FCMMessageDTO fcmMessageDTO = new FCMMessageDTO();
+                // fcmMessageDTO.setBody(message.toString());
+                // fcmMessageDTO.setUser_id("test");
+                // fcmMessageDTO.setTitle("OPC UA에서 보내셨습니다 ^^");
+
+                // fcmService.send_message(fcmMessageDTO);
+
+            }).get();
+
+        
     }
 
     // 구독 신청
-    public boolean subscribe(final String topic) throws Exception {
+    // public boolean subscribe(final String topic) throws Exception {
 
-        if (topic != null) {
-            mqttClient.subscribe(topic, 0);
-        }
+    //     if (topic != null) {
+    //         mqttClient.subscribe(topic, 0);
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    // 메시지 전송이 완료되었을 때 처리 로직
-    @Override
-    public void deliveryComplete(IMqttDeliveryToken token) {
-        log.info("MqttReceiver - deliveryComplete : 메시지 전송이 완료되었습니다.");
-    }
+    // // 메시지 전송이 완료되었을 때 처리 로직
+    // @Override
+    // public void deliveryComplete(IMqttDeliveryToken token) {
+    //     log.info("MqttReceiver - deliveryComplete : 메시지 전송이 완료되었습니다.");
+    // }
     
 }

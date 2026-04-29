@@ -60,6 +60,9 @@ dependencies {
 	// Rate Limiter
 	implementation 'com.bucket4j:bucket4j-core:8.3.0'
 
+	// aws iot core 연결
+	implementation 'software.amazon.awssdk.iotdevicesdk:aws-iot-device-sdk:1.31.0'
+
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
