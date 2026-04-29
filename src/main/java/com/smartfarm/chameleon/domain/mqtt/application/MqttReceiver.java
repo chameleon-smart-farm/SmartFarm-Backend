@@ -7,6 +7,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.smartfarm.chameleon.domain.fcm.application.FCMService;
+import com.smartfarm.chameleon.domain.fcm.dto.FCMMessageDTO;
+
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,6 +19,9 @@ public class MqttReceiver implements MqttCallback {
     
     @Autowired
     private MqttClient mqttClient;
+
+    @Autowired
+    private FCMService fcmService;
 
     @PostConstruct
     public void init(){
@@ -36,6 +42,13 @@ public class MqttReceiver implements MqttCallback {
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         log.info("MqttReceiver - messageArrived : 메시지가 도착했습니다.");
         log.info("MqttReceiver - messageArrived : topic : {} / message : {}", topic, message);
+
+        FCMMessageDTO fcmMessageDTO = new FCMMessageDTO();
+        fcmMessageDTO.setBody(message.toString());
+        fcmMessageDTO.setUser_id("test");
+        fcmMessageDTO.setTitle("OPC UA에서 보내셨습니다 ^^");
+
+        fcmService.send_message(fcmMessageDTO);
     }
 
     // 구독 신청
