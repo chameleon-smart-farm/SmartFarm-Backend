@@ -40,7 +40,7 @@ public class SecurityConfig {
 
     // 완전히 일치해야하는 URI 목록
     public static final List<String> PUBLIC_URIS_EQUAL = List.of(
-        "/login", "/user/serial", "/user/sign_up", "/fcm/send_message"
+        "/login", "/user/serial", "/user/sign_up", "/fcm/send_message", "/mqtt/send_message"
     );
     // 패턴에 맞춰 시작만 일치해도 되는 URI 목록
     public static final List<String> PUBLIC_URIS_START = List.of(
