@@ -21,6 +21,9 @@ services:
       MARIADB_PASSWORD : ${JENKINS_MARIADB_PASSWORD}
     volumes:
       - /home/ubuntu/keystore.p12:/etc/ssl/keystore.p12
+      - /home/ubuntu/thingCert.crt:/etc/ssl/thingCert.crt
+      - /home/ubuntu/privKey.key:/etc/ssl/privKey.key
+      - /home/ubuntu/AmazonRootCA1.pem:/etc/ssl/AmazonRootCA1.pem
     restart : always
     # server 기동하다가 문제가 발생하면 container를 다시 실행한다.
 
