@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 @Tag(name = "농장 상태 확인 API", description = "농장의 각종 상태 데이터 반환")
 @RestController
@@ -47,4 +48,14 @@ public class HouseStatusController {
 
         return new ResponseEntity<>(houseStatusService.read_weather_info(house_id, cur_time), HttpStatus.OK);
     }
+
+    @GetMapping("/get_tem")
+    @Operation(summary = "(MQTT) 농장 온도 데이터 조회" , description = "OPC UA에서 측정한 온도 데이터를 MQTT 메시지로 전달 받는 API")
+    public ResponseEntity<TemDTO> get_mqtt_tem() {
+
+        log.debug("HouseStatusController : MQTT 테스트 API");
+
+        return new ResponseEntity<>(houseStatusService.read_mqtt_tem().get(), HttpStatus.OK);
+    }
+    
 }
