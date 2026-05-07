@@ -6,6 +6,7 @@ import lombok.Data;
 public class MqttPublisherDTO {
     
     private String topic;
-    private String message;
+    private String msg;
+    private int request_id;
 
 }

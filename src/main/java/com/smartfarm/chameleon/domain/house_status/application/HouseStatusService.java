@@ -2,6 +2,11 @@ package com.smartfarm.chameleon.domain.house_status.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,6 +18,9 @@ import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
 import com.smartfarm.chameleon.domain.house_status.dto.HouseWeatherDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.TemAvgDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.TemDTO;
+import com.smartfarm.chameleon.domain.mqtt.application.MqttPublisher;
+import com.smartfarm.chameleon.domain.mqtt.dto.MqttPublisherDTO;
+import com.smartfarm.chameleon.global.config.MQTTConfig;
 import com.smartfarm.chameleon.global.toHouse.HttpHouse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +34,12 @@ public class HouseStatusService {
     
     @Autowired
     private HttpHouse httpHouse;
+
+    @Autowired
+    private MqttPublisher mqttPublisher;
+
+    @Autowired
+    private MQTTConfig mqttConfig;
 
     /**
      * 농장 서버에 요청을 보내 아래의 데이터를 반환
@@ -69,7 +83,7 @@ public class HouseStatusService {
         TemDTO result = new TemDTO();
         result.setTem_id(Integer.parseInt(tem_result.get("tem_id").toString()));
         result.setTem_day_time(tem_result.get("tem_day_time").toString());
-        result.setTem_data(Integer.parseInt(tem_result.get("tem_data").toString()));
+        result.setTem_data(Double.parseDouble(tem_result.get("tem_data").toString()));
         result.setWeather_tem(Integer.parseInt(tem_result.get("weather_tem").toString()));
         result.setAvg_list(list);
 
@@ -109,5 +123,48 @@ public class HouseStatusService {
         houseWeatherDTO.setWeather_wind(weather_result.get("weatherWind").toString());
 
         return houseWeatherDTO;
+    }
+
+    public Optional<TemDTO> read_mqtt_tem() {
+        
+        // CompletableFuture 생성 및 Map에 저장 (반드시 Map에 저장이 먼저 되어야 함, MQTT 속도가 빨라서 null에러가 발생할 수 있음)
+        CompletableFuture<String> future = new CompletableFuture<String>();
+        mqttConfig.add_future(future);
+
+        log.debug("HouseStatusService - read_mqtt_tem : Map에 future 추가 완료");
+
+        // MQTT 메시지 발행
+        MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
+        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/tmp");
+        mqttPublisherDTO.setMsg("get_tmp");
+        mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
+        
+        mqttPublisher.sendMessage(mqttPublisherDTO);
+
+        log.debug("HouseStatusService - read_mqtt_tem : MQTT 메시지 발행 후 결과 대기 중");
+
+        try {
+
+            // CompletableFuture 가 complete된 후 결과값을 Double로 변환 후 반환
+            String tem_data = future.get(10, TimeUnit.SECONDS);
+
+            log.debug("HouseStatusService - read_mqtt_tem : 성공적으로 {}를 전달받았습니다.", tem_data);
+
+            TemDTO temDTO = new TemDTO();
+            temDTO.setTem_data(Double.parseDouble(tem_data));
+
+            return Optional.of(temDTO);
+
+        } catch (InterruptedException e) {
+            log.error("HouseStatusService - read_mqtt_tem : InterruptedException 에러 발생");
+            return Optional.empty();
+        } catch (ExecutionException e) {
+            log.error("HouseStatusService - read_mqtt_tem : ExecutionException 에러 발생");
+            return Optional.empty();
+        } catch (TimeoutException e) {
+            log.error("HouseStatusService - read_mqtt_tem : TimeoutException 에러 발생");
+            return Optional.empty();
+        }
+
     }
 }

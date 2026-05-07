@@ -14,7 +14,7 @@ public class TemDTO {
     private String tem_day_time;
 
     // 온도 데이터
-    private int tem_data;
+    private double tem_data;
 
     // 기상청의 온도 데이터
     private int weather_tem;
