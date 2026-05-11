@@ -167,4 +167,16 @@ public class HouseStatusService {
         }
 
     }
+
+    // mqtt_test
+    public void mqtt_test(String msg){
+
+        // MQTT 메시지 발행
+        MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
+        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/test");
+        mqttPublisherDTO.setMsg(msg);
+        
+        mqttPublisher.sendMessage(mqttPublisherDTO);
+
+    }
 }

@@ -122,14 +122,16 @@ public class MQTTConfig {
                     Object obj_payload = jsonParser.parse(payload);
                     JSONObject result = (JSONObject) obj_payload;
 
-                    if(Objects.isNull(result.get("request_id"))){
+                    if(Objects.isNull(result.get("request_id")) || Integer.parseInt(result.get("request_id").toString()) == 0  ){
 
-                        // request_id가 없다면 OPC UA에서 먼저 보내는 메시지이므로 앱으로 PUSH 알림
+                        // request_id가 없거나 0이라면 OPC UA에서 먼저 보내는 메시지이므로 앱으로 PUSH 알림
 
                         FCMMessageDTO fcmMessageDTO = new FCMMessageDTO();
                         fcmMessageDTO.setBody(result.get("value").toString());
                         fcmMessageDTO.setUser_id("test");
                         fcmMessageDTO.setTitle("OPC UA에서 보내셨습니다 ^^");
+
+                        log.debug("MQTT - 메시지 발행하겠습니다.");
 
                         fcmService.send_message(fcmMessageDTO);
 
@@ -148,6 +150,9 @@ public class MQTTConfig {
                         }else{
                             log.debug("MQTT - Received: CompletableFuture가 null입니다.");
                         }
+
+                        // 요청을 완료했으므로 제거
+                        request_list.remove(result.get("request_id"));
           
                     }
 
@@ -160,6 +165,7 @@ public class MQTTConfig {
 
             return connection;
         } catch (Exception e) {
+            log.debug("MQTT - AWS IoT 연결 실패");
             throw new RuntimeException("MQTT - AWS IoT 연결 실패", e);
         }
 

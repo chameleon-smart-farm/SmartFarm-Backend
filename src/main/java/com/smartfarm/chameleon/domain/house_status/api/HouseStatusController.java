@@ -18,6 +18,9 @@ import com.smartfarm.chameleon.domain.house_status.dto.TemDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Slf4j
@@ -57,5 +60,13 @@ public class HouseStatusController {
 
         return new ResponseEntity<>(houseStatusService.read_mqtt_tem().get(), HttpStatus.OK);
     }
+
+    @PostMapping("/mqtt_test")
+    public void mqtt_test (@RequestBody String test) {
+        
+        houseStatusService.mqtt_test(test);
+        
+    }
+    
     
 }

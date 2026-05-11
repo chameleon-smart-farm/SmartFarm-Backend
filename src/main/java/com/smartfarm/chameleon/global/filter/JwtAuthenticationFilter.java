@@ -194,6 +194,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return cookie.getValue();
                 }
             }
+        }else{
+            log.info("JwtAuthenticationFilter - resolveRefreshToken / cookie가 없습니다");
         }
 
         return null;
