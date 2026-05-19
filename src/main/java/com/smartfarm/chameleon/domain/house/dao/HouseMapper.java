@@ -22,6 +22,9 @@ public interface HouseMapper {
     // 농장 아이디로 농장의 백엔드 주소 가져오기
     public String read_back_url(int house_id);
 
+    // 농장 아이디로 사용자 아이디 가져오기
+    public String read_user_id(int house_id);
+
     // 사용자의 USER_PK와 HOUSE_ID 연결
     public void add_house(UserHouseDTO userHouseDTO);
 
