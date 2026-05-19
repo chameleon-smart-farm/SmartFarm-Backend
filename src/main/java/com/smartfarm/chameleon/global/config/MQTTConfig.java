@@ -17,6 +17,7 @@ import org.json.simple.parser.ParseException;
 
 import com.smartfarm.chameleon.domain.fcm.application.FCMService;
 import com.smartfarm.chameleon.domain.fcm.dto.FCMMessageDTO;
+import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.crt.CRT;
@@ -52,6 +53,8 @@ public class MQTTConfig {
 
     @Autowired
     private FCMService fcmService;
+    @Autowired
+    private HouseMapper houseMapper;
     
     // 구독 topic +/+로 모든 device로부터 MQTT 메시지를 받게 함.
     private final String topic = "core/topic/tocloud/+/+";
@@ -125,10 +128,14 @@ public class MQTTConfig {
                     if(Objects.isNull(result.get("request_id")) || Integer.parseInt(result.get("request_id").toString()) == 0  ){
 
                         // request_id가 없거나 0이라면 OPC UA에서 먼저 보내는 메시지이므로 앱으로 PUSH 알림
+                        
+                        int house_id = Integer.parseInt(result.get("house_id").toString());
+                        String user_id = houseMapper.read_user_id(house_id);
 
                         FCMMessageDTO fcmMessageDTO = new FCMMessageDTO();
                         fcmMessageDTO.setBody(result.get("value").toString());
-                        fcmMessageDTO.setUser_id("test");
+                        // fcmMessageDTO.setUser_id("test");
+                        fcmMessageDTO.setUser_id(user_id);
                         fcmMessageDTO.setTitle("OPC UA에서 보내셨습니다 ^^");
 
                         log.debug("MQTT - 메시지 발행하겠습니다.");
