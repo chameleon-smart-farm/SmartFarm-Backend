@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smartfarm.chameleon.domain.house_status.application.HouseStatusService;
 import com.smartfarm.chameleon.domain.house_status.dto.HouseWeatherDTO;
+import com.smartfarm.chameleon.domain.house_status.dto.StatusDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.TemDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +42,7 @@ public class HouseStatusController {
 
     @GetMapping("/get_weather_info/{house_id}")
     @Operation(summary = "농장 기상청 데이터 반환" , description = "온도, 습도, 풍속, 하늘 상태, 강수 상태 정보를 반환하는 API")
-    public ResponseEntity<HouseWeatherDTO> read_weather_info(@PathVariable("house_id") int house_id) {
+    public ResponseEntity<HouseWeatherDTO> get_weather_info(@PathVariable("house_id") int house_id) {
         
         log.info("UserController : 농장 기상청 데이터 반환 API");
 
@@ -52,14 +53,33 @@ public class HouseStatusController {
         return new ResponseEntity<>(houseStatusService.read_weather_info(house_id, cur_time), HttpStatus.OK);
     }
 
-    @GetMapping("/get_tem")
-    @Operation(summary = "(MQTT) 농장 온도 데이터 조회" , description = "OPC UA에서 측정한 온도 데이터를 MQTT 메시지로 전달 받는 API")
-    public ResponseEntity<TemDTO> get_mqtt_tem() {
+    @GetMapping("/get_in_tem_info")
+    @Operation(summary = "(MQTT) 농장 내부 온도 데이터 조회" , description = "OPC UA에서 PLC의 내부 온도 데이터를 MQTT 메시지로 전달 받는 API")
+    public ResponseEntity<TemDTO> get_in_tem() {
 
         log.debug("HouseStatusController : MQTT 테스트 API");
 
-        return new ResponseEntity<>(houseStatusService.read_mqtt_tem().get(), HttpStatus.OK);
+        return new ResponseEntity<>(houseStatusService.read_in_tem().get(), HttpStatus.OK);
     }
+
+    @GetMapping("/get_double_sensor_info/{topic}")
+    @Operation(summary = "(MQTT) 농장 센서 데이터 (double) 조회" , description = "OPC UA에서 PLC의 데이터를 MQTT 메시지로 전달 받는 API")
+    public ResponseEntity<StatusDTO> get_double_sensor_info(@PathVariable("topic") String topic) {
+
+        log.debug("HouseStatusController : MQTT 농장 센서 데이터 (double) 조회");
+
+        return new ResponseEntity<>(houseStatusService.read_double_house_status(topic).get(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get_string_sensor_info/{topic}")
+    @Operation(summary = "(MQTT) 농장 센서 데이터 (string) 조회" , description = "OPC UA에서 PLC의 데이터를 MQTT 메시지로 전달 받는 API")
+    public ResponseEntity<StatusDTO> get_string_sensor_info(@PathVariable("topic") String topic) {
+
+        log.debug("HouseStatusController : MQTT 농장 센서 데이터 (string) 조회");
+
+        return new ResponseEntity<>(houseStatusService.read_string_house_status(topic).get(), HttpStatus.OK);
+    }
+
 
     @PostMapping("/mqtt_test")
     public void mqtt_test (@RequestBody String test) {
