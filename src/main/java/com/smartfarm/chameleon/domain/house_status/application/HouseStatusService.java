@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
 import com.smartfarm.chameleon.domain.house_status.dto.HouseWeatherDTO;
+import com.smartfarm.chameleon.domain.house_status.dto.StatusDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.TemAvgDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.TemDTO;
 import com.smartfarm.chameleon.domain.mqtt.application.MqttPublisher;
@@ -125,18 +126,25 @@ public class HouseStatusService {
         return houseWeatherDTO;
     }
 
-    public Optional<TemDTO> read_mqtt_tem() {
+    /**
+     * 사용자가 요청한 RESTful API는 CompletableFuture로 잠시 잡아두고
+     * OPC UA에 mqtt 메시지를 보내 내부 온도 데이터를 받아와서
+     * CompletableFuture로 다시 RESTful API에 응답을 보낸다.
+     * 
+     * @return
+     */
+    public Optional<TemDTO> read_in_tem() {
         
         // CompletableFuture 생성 및 Map에 저장 (반드시 Map에 저장이 먼저 되어야 함, MQTT 속도가 빨라서 null에러가 발생할 수 있음)
         CompletableFuture<String> future = new CompletableFuture<String>();
         mqttConfig.add_future(future);
 
-        log.debug("HouseStatusService - read_mqtt_tem : Map에 future 추가 완료");
+        log.debug("HouseStatusService - read_in_tem : Map에 future 추가 완료");
 
         // MQTT 메시지 발행
         MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
-        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/tmp");
-        mqttPublisherDTO.setMsg("get_tmp");
+        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/in_tmp");
+        mqttPublisherDTO.setMsg("get_in_tmp");
         mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
         
         mqttPublisher.sendMessage(mqttPublisherDTO);
@@ -167,6 +175,89 @@ public class HouseStatusService {
         }
 
     }
+
+    public Optional<StatusDTO> read_double_house_status(String topic) {
+        
+        // CompletableFuture 생성 및 Map에 저장
+        CompletableFuture<String> future = new CompletableFuture<String>();
+        mqttConfig.add_future(future);
+
+        log.debug("HouseStatusService - read_house_status : Map에 future 추가 완료");
+
+        // MQTT 메시지 발행
+        MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
+        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/" + topic);
+        mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
+        
+        mqttPublisher.sendMessage(mqttPublisherDTO);
+
+        log.debug("HouseStatusService - read_double_house_status : MQTT 메시지 발행 후 결과 대기 중");
+
+        try {
+            // CompletableFuture 가 complete된 후 결과값을 Double로 변환 후 반환
+            String data = future.get(10, TimeUnit.SECONDS);
+
+            log.debug("HouseStatusService - read_double_house_status : 성공적으로 {}를 전달받았습니다.", data);
+
+            StatusDTO statusDTO = new StatusDTO();
+            statusDTO.setDou_value(Double.parseDouble(data));
+
+            return Optional.of(statusDTO);
+
+        } catch (InterruptedException e) {
+            log.error("HouseStatusService - read_double_house_status : InterruptedException 에러 발생");
+            return Optional.empty();
+        } catch (ExecutionException e) {
+            log.error("HouseStatusService - read_double_house_status : ExecutionException 에러 발생");
+            return Optional.empty();
+        } catch (TimeoutException e) {
+            log.error("HouseStatusService - read_double_house_status : TimeoutException 에러 발생");
+            return Optional.empty();
+        }
+    }
+
+
+    public Optional<StatusDTO> read_string_house_status(String topic) {
+        
+        // CompletableFuture 생성 및 Map에 저장
+        CompletableFuture<String> future = new CompletableFuture<String>();
+        mqttConfig.add_future(future);
+
+        log.debug("HouseStatusService - read_house_status : Map에 future 추가 완료");
+
+        // MQTT 메시지 발행
+        MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
+        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/" + topic);
+        mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
+        
+        mqttPublisher.sendMessage(mqttPublisherDTO);
+
+        log.debug("HouseStatusService - read_double_house_status : MQTT 메시지 발행 후 결과 대기 중");
+
+        try {
+            // CompletableFuture 가 complete된 후 결과값을 Double로 변환 후 반환
+            String data = future.get(10, TimeUnit.SECONDS);
+
+            log.debug("HouseStatusService - read_double_house_status : 성공적으로 {}를 전달받았습니다.", data);
+
+            StatusDTO statusDTO = new StatusDTO();
+            statusDTO.setStr_value(data);
+
+            return Optional.of(statusDTO);
+
+        } catch (InterruptedException e) {
+            log.error("HouseStatusService - read_double_house_status : InterruptedException 에러 발생");
+            return Optional.empty();
+        } catch (ExecutionException e) {
+            log.error("HouseStatusService - read_double_house_status : ExecutionException 에러 발생");
+            return Optional.empty();
+        } catch (TimeoutException e) {
+            log.error("HouseStatusService - read_double_house_status : TimeoutException 에러 발생");
+            return Optional.empty();
+        }
+    }
+
+
 
     // mqtt_test
     public void mqtt_test(String msg){
