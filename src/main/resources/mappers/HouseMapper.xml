@@ -60,6 +60,17 @@
 
     </select>
 
+    <!-- 농장 아이디로 device_id 가져오기 -->
+    <select id="read_device_id"
+        parameterType="java.lang.Integer"
+        resultType="java.lang.String">
+
+        SELECT  device_id
+        FROM    house
+        WHERE   house_id = #{house_id}
+
+    </select>
+
     <!-- USER_PK와 HOUSE_ID 연결 -->
     <update id="add_house"
         parameterType="com.smartfarm.chameleon.domain.house.dto.UserHouseDTO">
