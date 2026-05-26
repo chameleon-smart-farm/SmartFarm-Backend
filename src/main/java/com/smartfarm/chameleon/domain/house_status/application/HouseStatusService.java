@@ -176,7 +176,7 @@ public class HouseStatusService {
 
     }
 
-    public Optional<StatusDTO> read_double_house_status(String topic) {
+    public Optional<StatusDTO> read_double_house_status(String sensor_kind, int house_id) {
         
         // CompletableFuture 생성 및 Map에 저장
         CompletableFuture<String> future = new CompletableFuture<String>();
@@ -184,9 +184,12 @@ public class HouseStatusService {
 
         log.debug("HouseStatusService - read_house_status : Map에 future 추가 완료");
 
+        // house_id로 device_id 가져오기
+        String device_id = houseMapper.read_device_id(house_id);
+
         // MQTT 메시지 발행
         MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
-        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/" + topic);
+        mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/" + sensor_kind);
         mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
         
         mqttPublisher.sendMessage(mqttPublisherDTO);
@@ -217,7 +220,7 @@ public class HouseStatusService {
     }
 
 
-    public Optional<StatusDTO> read_string_house_status(String topic) {
+    public Optional<StatusDTO> read_string_house_status(String sensor_kind, int house_id) {
         
         // CompletableFuture 생성 및 Map에 저장
         CompletableFuture<String> future = new CompletableFuture<String>();
@@ -225,9 +228,12 @@ public class HouseStatusService {
 
         log.debug("HouseStatusService - read_house_status : Map에 future 추가 완료");
 
+        // house_id로 device_id 가져오기
+        String device_id = houseMapper.read_device_id(house_id);
+
         // MQTT 메시지 발행
         MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
-        mqttPublisherDTO.setTopic("core/topic/tolocal/device_01/" + topic);
+        mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/" + sensor_kind);
         mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
         
         mqttPublisher.sendMessage(mqttPublisherDTO);
