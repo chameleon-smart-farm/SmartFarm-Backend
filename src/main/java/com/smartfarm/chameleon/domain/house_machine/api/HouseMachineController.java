@@ -52,9 +52,9 @@ public class HouseMachineController {
 
     @PostMapping("/{machine_kind}/operate/{house_id}")
     @Operation(summary = "기기 동작 변경", description = "전달된 boolean 값에 따라 기기를 ON/OFF 하는 API")
-    public void machine_on_off(@PathVariable String machine_kind, @PathVariable int house_id, @RequestBody MachineStatusDTO status) {
+    public void update_machine_on_off(@PathVariable String machine_kind, @PathVariable int house_id, @RequestBody MachineStatusDTO status) {
         log.info("HouseMachineController : 기기 동작 API");
-        houseMachineService.machine_on_off(machine_kind, house_id, status);
+        houseMachineService.update_machine_on_off(machine_kind, house_id, status);
     }
 
     @GetMapping("/{user_set_kind}/user_status/{house_id}")
@@ -67,7 +67,7 @@ public class HouseMachineController {
     @PostMapping("/{user_set_kind}/user_operate/{house_id}")
     @Operation(summary = "사용자 세팅 변경", description = "전달된 double 값에 따라 사용자 세팅을 변경하는 API")
     public void update_user_setting (@PathVariable String user_set_kind, @PathVariable int house_id, @RequestBody MachineSetDTO set_value) {
-        log.info("HouseMachineController : 기기 동작 API");
+        log.info("HouseMachineController : 사용자 세팅 변경 API");
         houseMachineService.update_user_setting(user_set_kind, house_id, set_value);
     }
     

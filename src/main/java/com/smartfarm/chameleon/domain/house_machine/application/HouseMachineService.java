@@ -135,7 +135,7 @@ public class HouseMachineService {
      * @param house_id : device_id를 알아옴
      * @param status : 사용자가 조작한 boolean 값
      */
-    public void machine_on_off(String machine_kind, int house_id, MachineStatusDTO status){
+    public void update_machine_on_off(String machine_kind, int house_id, MachineStatusDTO status){
         // CompletableFuture 생성 및 Map에 저장
         CompletableFuture future = new CompletableFuture<String>();
         mqttConfig.add_future(future);
@@ -171,7 +171,7 @@ public class HouseMachineService {
         }
     }
 
-    public Optional<MachineSetDTO> read_user_set_status(String machine_kind, int house_id){
+    public Optional<MachineSetDTO> read_user_set_status(String user_set_kind, int house_id){
 
         // CompletableFuture 생성 및 Map에 저장
         CompletableFuture future = new CompletableFuture<String>();
@@ -184,7 +184,7 @@ public class HouseMachineService {
 
         // MQTT 메시지 발행
         MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
-        mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/" + machine_kind);
+        mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/" + user_set_kind);
         mqttPublisherDTO.setMsg("status");
         mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
 
