@@ -7,7 +7,7 @@ public class MqttPublisherDTO {
     
     private String  topic;
     private String  msg;
-    private boolean bool_value;
+    private int     int_value;
     private double  dou_value;
     private int     request_id;
 

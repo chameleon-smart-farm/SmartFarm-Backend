@@ -63,21 +63,21 @@ public class HouseStatusController {
     }
 
     @GetMapping("/{sensor_kind}/get_double_sensor_info/{house_id}")
-    @Operation(summary = "농장 센서 데이터 (double) 조회" , description = "각 센서의 데이터를 double 형태로 반환받는 API")
+    @Operation(summary = "농장 센서 데이터 조회" , description = "각 센서의 데이터를 double 형태로 반환받는 API")
     public ResponseEntity<StatusDTO> get_double_sensor_info(@PathVariable String sensor_kind, @PathVariable int house_id) {
 
-        log.debug("HouseStatusController : MQTT 농장 센서 데이터 (double) 조회");
+        log.debug("HouseStatusController : MQTT 농장 센서 데이터 조회");
 
         return new ResponseEntity<>(houseStatusService.read_double_house_status(sensor_kind, house_id).get(), HttpStatus.OK);
     }
 
-    @GetMapping("/{sensor_kind}/get_string_sensor_info/{house_id}")
-    @Operation(summary = "농장 센서 데이터 (string) 조회" , description = "외부 풍향, 제어 모드를 string 형태로 반환받는 API")
-    public ResponseEntity<StatusDTO> get_string_sensor_info(@PathVariable String sensor_kind, @PathVariable int house_id) {
+    @GetMapping("/get_system_mode_info/{house_id}")
+    @Operation(summary = "시스템(제어) 모드 조회" , description = "시스템(제어) 모드를 string 형태로 반환받는 API")
+    public ResponseEntity<StatusDTO> get_string_sensor_info(@PathVariable int house_id) {
 
-        log.debug("HouseStatusController : MQTT 농장 센서 데이터 (string) 조회");
+        log.debug("HouseStatusController : MQTT 농장 시스템(제어) 모드 조회");
 
-        return new ResponseEntity<>(houseStatusService.read_string_house_status(sensor_kind, house_id).get(), HttpStatus.OK);
+        return new ResponseEntity<>(houseStatusService.read_system_mode_status(house_id).get(), HttpStatus.OK);
     }
 
 

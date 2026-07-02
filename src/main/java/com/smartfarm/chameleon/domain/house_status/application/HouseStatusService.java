@@ -220,31 +220,31 @@ public class HouseStatusService {
     }
 
 
-    public Optional<StatusDTO> read_string_house_status(String sensor_kind, int house_id) {
+    public Optional<StatusDTO> read_system_mode_status(int house_id) {
         
         // CompletableFuture 생성 및 Map에 저장
         CompletableFuture<String> future = new CompletableFuture<String>();
         mqttConfig.add_future(future);
 
-        log.debug("HouseStatusService - read_house_status : Map에 future 추가 완료");
+        log.debug("HouseStatusService - read_system_mode_status : Map에 future 추가 완료");
 
         // house_id로 device_id 가져오기
         String device_id = houseMapper.read_device_id(house_id);
 
         // MQTT 메시지 발행
         MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
-        mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/" + sensor_kind);
+        mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/system_mode");
         mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
         
         mqttPublisher.sendMessage(mqttPublisherDTO);
 
-        log.debug("HouseStatusService - read_double_house_status : MQTT 메시지 발행 후 결과 대기 중");
+        log.debug("HouseStatusService - read_system_mode_status : MQTT 메시지 발행 후 결과 대기 중");
 
         try {
             // CompletableFuture 가 complete된 후 결과값을 Double로 변환 후 반환
             String data = future.get(10, TimeUnit.SECONDS);
 
-            log.debug("HouseStatusService - read_double_house_status : 성공적으로 {}를 전달받았습니다.", data);
+            log.debug("HouseStatusService - read_system_mode_status : 성공적으로 {}를 전달받았습니다.", data);
 
             StatusDTO statusDTO = new StatusDTO();
             statusDTO.setStr_value(data);
@@ -252,13 +252,13 @@ public class HouseStatusService {
             return Optional.of(statusDTO);
 
         } catch (InterruptedException e) {
-            log.error("HouseStatusService - read_double_house_status : InterruptedException 에러 발생");
+            log.error("HouseStatusService - read_system_mode_status : InterruptedException 에러 발생");
             return Optional.empty();
         } catch (ExecutionException e) {
-            log.error("HouseStatusService - read_double_house_status : ExecutionException 에러 발생");
+            log.error("HouseStatusService - read_system_mode_status : ExecutionException 에러 발생");
             return Optional.empty();
         } catch (TimeoutException e) {
-            log.error("HouseStatusService - read_double_house_status : TimeoutException 에러 발생");
+            log.error("HouseStatusService - read_system_mode_status : TimeoutException 에러 발생");
             return Optional.empty();
         }
     }

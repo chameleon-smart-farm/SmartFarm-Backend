@@ -6,6 +6,6 @@ import lombok.Data;
 public class MachineStatusDTO {
 
     // 기기 상태
-    private boolean value;
+    private int value;
     
 }
