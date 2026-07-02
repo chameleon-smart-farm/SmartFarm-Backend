@@ -50,13 +50,13 @@ public class HouseMachineService {
         JSONObject res_result = (JSONObject) httpHouse.get_http_connection(get_url).get();
 
         // 결과 생성
-        MachineStatusDTO result = new MachineStatusDTO();
-        result.setValue(Boolean.parseBoolean(res_result.get("motor_status").toString()));
+        // MachineStatusDTO result = new MachineStatusDTO();
+        // result.setValue(Boolean.parseBoolean(res_result.get("motor_status").toString()));
 
         // 결과 출력
-        log.info("get_motor_status - 모터 상태 : " + result.isValue());
+        // log.info("get_motor_status - 모터 상태 : " + result.isValue());
 
-        return result;
+        return null;
     }
     
     /**
@@ -110,7 +110,7 @@ public class HouseMachineService {
             log.debug("HouseStatusService - read_machine_status : 성공적으로 {}를 전달받았습니다.", data);
 
             MachineStatusDTO result = new MachineStatusDTO();
-            result.setValue(Boolean.parseBoolean(data));
+            result.setValue(Integer.parseInt(data));
 
             return Optional.of(result);
 
@@ -149,7 +149,7 @@ public class HouseMachineService {
         MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
         mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/" + machine_kind);
         mqttPublisherDTO.setMsg("operate");
-        mqttPublisherDTO.setBool_value(status.isValue());
+        mqttPublisherDTO.setInt_value(status.getValue());
         mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
 
         mqttPublisher.sendMessage(mqttPublisherDTO);
