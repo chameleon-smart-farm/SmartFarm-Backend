@@ -1,5 +1,7 @@
 package com.smartfarm.chameleon.domain.house_machine.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartfarm.chameleon.domain.house_machine.application.HouseMachineService;
+import com.smartfarm.chameleon.domain.house_machine.dto.MachineListDTO;
 import com.smartfarm.chameleon.domain.house_machine.dto.MachineSetDTO;
 import com.smartfarm.chameleon.domain.house_machine.dto.MachineStatusDTO;
 
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 
@@ -43,6 +47,13 @@ public class HouseMachineController {
         houseMachineService.motor_on_off(house_id, status);
     }
 
+    @GetMapping("/user_machine_list/{house_id}")
+    @Operation(summary = "사용자 보유 기기 리스트 반환", description = "사용자가 보유하고 있는 기기의 리스트를 반환하는 API")
+    public ResponseEntity<List<MachineListDTO>> get_user_machine_list(@PathVariable int house_id) {
+        log.info("HouseMachineController : 사용자 보유 기기 리스트 반환 API");
+        return new ResponseEntity<List<MachineListDTO>>(houseMachineService.read_user_machine_list(house_id).get(), HttpStatus.OK);
+    }
+    
     @GetMapping("/{machine_kind}/status/{house_id}")
     @Operation(summary = "기기 상태 반환", description = "기기 상태를 반환하는 API")
     public ResponseEntity<MachineStatusDTO> get_machine_status(@PathVariable String machine_kind, @PathVariable int house_id) {

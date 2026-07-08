@@ -165,7 +165,9 @@ public class MQTTConfig {
 
                 } catch (ParseException e) {
                     log.error("MQTTConfig 구독 - " + e);
-                    throw new RuntimeException(e);
+                    // throw new RuntimeException(e);
+                } catch (NullPointerException e) {
+                    log.error("MQTTConfig : NullPointerException 에러 발생");
                 }
 
             }).get();
