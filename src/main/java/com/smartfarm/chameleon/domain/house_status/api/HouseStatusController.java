@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Slf4j
-@Tag(name = "농장 상태 확인 API", description = "농장의 각종 상태 데이터 반환")
+@Tag(name = "House Status API", description = "농장의 각종 상태 데이터 반환")
 @RestController
 @RequestMapping("/house_status")
 public class HouseStatusController {

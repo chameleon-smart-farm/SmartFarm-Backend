@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Slf4j
 @RestController
-@Tag(name = "로그인 API", description = "로그인, 로그아웃, 사용자 이름 조회 등 token을 사용한 기능")
+@Tag(name = "Login API", description = "로그인, 로그아웃, 사용자 이름 조회 등 token을 사용한 기능")
 public class LoginController {
 
     @Autowired

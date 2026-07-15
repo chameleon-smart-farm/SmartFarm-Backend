@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @Slf4j
-@Tag(name = "농장 기기 API", description = "농장의 각종 기기 데이터 상태 조회와 동작 관리")
+@Tag(name = "House Machine API", description = "농장의 각종 기기 데이터 상태 조회와 동작 관리")
 @RestController
 @RequestMapping("/house_machine")
 public class HouseMachineController {
