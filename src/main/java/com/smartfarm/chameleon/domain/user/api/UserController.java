@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RequestMapping("/user")
-@Tag(name = "사용자 API", description = "사용자 정보 CRU와 회원가입 기능")
+@Tag(name = "User API", description = "사용자 정보 CRU와 회원가입 기능")
 @RestController
 public class UserController {
 
@@ -58,7 +58,7 @@ public class UserController {
 
     @PostMapping("/sign_up")
     @Operation(summary = "사용자 회원 가입" , description = "사용자 이름, 아이디, 비밀번호, 관심 작물, 농장 아이디를 입력받고 농장 아이디로 농장 이름(회사 서버)과 키우는 작물(농장 서버)을 입력(수정)하는 API")
-    public void putMethodName(@RequestBody SignUpDTO signUpDTO) {
+    public void sign_up(@RequestBody SignUpDTO signUpDTO) {
         log.info("UserController : 사용자 회원 가입 API");
         userService.sign_up(signUpDTO);
     }

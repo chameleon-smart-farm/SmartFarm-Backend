@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequestMapping("/reservation")
-@Tag(name = "농장 예약 API", description = "농장 기기 예약 CRUD")
+@Tag(name = "House Reservation API", description = "농장 기기 예약 CRUD")
 @RestController
 public class ReservationController {
 
