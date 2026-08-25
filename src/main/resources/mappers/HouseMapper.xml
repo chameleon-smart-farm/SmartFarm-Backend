@@ -3,12 +3,12 @@
 
 <mapper namespace="com.smartfarm.chameleon.domain.house.dao.HouseMapper">
 
-    <!-- 사용자 pk로 농장 아이디, 농장 백엔드 주소 받아오기 -->
-    <select id="read_back_url_list"
+    <!-- 사용자 pk로 농장 아이디, 농장 이름, 농장 디바이스 아이디 받아오기 -->
+    <select id="read_house_list"
         parameterType="java.lang.Integer"
         resultType="com.smartfarm.chameleon.domain.house.dto.UserHouseDTO">
 
-        SELECT  id, house_id, house_name, house_back_url
+        SELECT  id, house_id, house_name, device_id
         FROM    house
         WHERE   id=#{id}
 

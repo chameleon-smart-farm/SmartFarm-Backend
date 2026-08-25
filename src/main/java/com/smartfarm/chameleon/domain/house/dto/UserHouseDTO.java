@@ -17,5 +17,8 @@ public class UserHouseDTO {
     // 사용자 농자 이름
     private String house_name;
 
+    // 사용자 디바이스 아이디
+    private String device_id;
+
     
 }
