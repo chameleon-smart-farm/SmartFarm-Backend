@@ -13,6 +13,7 @@ import software.amazon.awssdk.crt.mqtt.QualityOfService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Slf4j
 @Service
@@ -35,18 +36,8 @@ public class MqttPublisher {
 
     private String message = "메시지가 발송 불안정, 다시 시도하겠습니다.";
 
-    public void sendMessage(MqttPublisherDTO mqttPublisherDTO) {
-
-        // mqttPublisherDTO Json 변환
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-
-            message = objectMapper.writeValueAsString(mqttPublisherDTO);
-            log.debug("MQTT - Json 변환 : " + message);
-
-        } catch (JsonProcessingException e) {
-            log.debug("MQTT - Json 변환 실패");
-        }
+    // MQTT 메시지 전달
+    public void send(MqttPublisherDTO mqttPublisherDTO){
 
         // 발행할 MQTT 메시지 설정
         MqttMessage mqttMessage = new MqttMessage(mqttPublisherDTO.getTopic(), message.getBytes(StandardCharsets.UTF_8),
@@ -63,6 +54,48 @@ public class MqttPublisher {
         // 모든 connect가 해제될 때까지 기다리는 메서드 (절대 주석 해제하지 말 것)
         // CrtResource.waitForNoResources();
 
+    }
+
+    // MqttPublisherDTO를 Json 형태의 String으로 변환
+    public void sendMessage(MqttPublisherDTO mqttPublisherDTO) {
+
+        // mqttPublisherDTO Json 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+
+            message = objectMapper.writeValueAsString(mqttPublisherDTO);
+            log.debug("MQTT - Json 변환 : " + message);
+
+        } catch (JsonProcessingException e) {
+            log.debug("MQTT - Json 변환 실패");
+        }
+
+        send(mqttPublisherDTO);
+
+    }
+
+    // MqttPublisherDTO와 다른 DTO를 합쳐 Json 형태의 String으로 변환
+    public void sendDTO(MqttPublisherDTO mqttPublisherDTO, Object dto){
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+
+            // mqttPublisherDTO JsonNode 변환
+            ObjectNode root = objectMapper.valueToTree(mqttPublisherDTO);
+
+            // root에 전달할 DTO 추가
+            root.set(dto.getClass().getSimpleName(), objectMapper.valueToTree(dto));
+
+            // 최종 Json 변환
+            message = objectMapper.writeValueAsString(root);
+
+            log.debug("MQTT - Json 변환 : " + message);
+
+        } catch (JsonProcessingException e) {
+            log.debug("MQTT - Json 변환 실패");
+        }
+
+        send(mqttPublisherDTO);
     }
 
 }

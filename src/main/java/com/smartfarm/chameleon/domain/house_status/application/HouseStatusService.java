@@ -10,11 +10,14 @@ import java.util.concurrent.TimeoutException;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.smartfarm.chameleon.domain.house.dao.HouseMapper;
+import com.smartfarm.chameleon.domain.house_machine.dto.MachineListDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.HouseWeatherDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.StatusDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.TemAvgDTO;
@@ -175,6 +178,87 @@ public class HouseStatusService {
         }
 
     }
+
+
+    /**
+     * 사용자가 보유하고 있는 기기(device) 중 센서 리스트를 반환받는 메서드
+     * 
+     * 전달받은 value를 JsonArray로 변경해
+     * Array 안의 각 값을 다시 MachineListDTO로 변경해 result 에 담아 반환
+     * 
+     * @param house_id
+     * @return
+     */
+    public Optional<List<MachineListDTO>> read_user_sensor_list(int house_id){
+
+        // CompletableFuture 생성 및 Map에 저장
+        CompletableFuture future = new CompletableFuture<String>();
+        mqttConfig.add_future(future);
+
+        log.debug("HouseStatusService - read_user_sensor_list : Map에 future 추가 완료");
+
+        // house_id로 device_id 가져오기
+        String device_id = houseMapper.read_device_id(house_id);
+
+        // MQTT 메시지 발행
+        MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
+        mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/user_sensor_list");
+        mqttPublisherDTO.setMsg("user_sensor_list");
+        mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
+
+        mqttPublisher.sendMessage(mqttPublisherDTO);
+
+        log.debug("HouseStatusService - read_user_sensor_list : MQTT 메시지 발행 후 결과 대기 중");
+
+        try {
+            // CompletableFuture 가 complete된 후 결과값을 String으로 변환
+            String data = future.get(10, TimeUnit.SECONDS).toString();
+
+            // json parser를 통해 Object로 변환
+            JSONParser jsonParser = new JSONParser();
+            JSONArray response_result = (JSONArray) jsonParser.parse(data); 
+            log.info("HouseStatusService - read_user_sensor_list : Json 리스트 변환 : " + response_result.toString());
+
+            // 사용자에게 보낼 결과 값
+            List<MachineListDTO> result = new ArrayList<>();
+
+            // List 처리
+            for(Object o : response_result){
+
+                // List 안의 요소를 JsonObject로 변환
+                JSONObject jsonObject = (JSONObject) o;
+
+                MachineListDTO machineListDTO = new MachineListDTO();
+                machineListDTO.setUser_device_id(Integer.parseInt(jsonObject.get("user_device_id").toString()));
+                machineListDTO.setUser_device_name(jsonObject.get("user_device_name").toString());
+                machineListDTO.setDevice_type_short_name(jsonObject.get("device_type_short_name").toString());
+                machineListDTO.setUser_device_activate(Integer.parseInt(jsonObject.get("user_device_activate").toString()));
+
+                result.add(machineListDTO);
+            }
+
+            log.debug("HouseStatusService - read_user_sensor_list : 성공적으로 {}를 전달받았습니다.", result.toString());
+
+            return Optional.of(result);
+
+        } catch (InterruptedException e) {
+            log.error("HouseStatusService - read_user_sensor_list : InterruptedException 에러 발생");
+            return Optional.empty();
+        } catch (ExecutionException e) {
+            log.error("HouseStatusService - read_user_sensor_list : ExecutionException 에러 발생");
+            return Optional.empty();
+        } catch (TimeoutException e) {
+            log.error("HouseStatusService - read_user_sensor_list : TimeoutException 에러 발생");
+            return Optional.empty();
+        } catch (ParseException e) {
+            log.error("HouseStatusService - read_user_sensor_list : ParseException 에러 발생");
+            return Optional.empty();
+        } catch (NullPointerException e) {
+            log.error("HouseStatusService - read_user_sensor_list : NullPointerException 에러 발생");
+            return Optional.empty();
+        }
+    }
+
 
     public Optional<StatusDTO> read_double_house_status(String sensor_kind, int house_id) {
         

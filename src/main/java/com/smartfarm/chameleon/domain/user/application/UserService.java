@@ -88,8 +88,7 @@ public class UserService {
         houseInfoDTO.setHouse_name(signUpDTO.getHouse_name());
         houseInfoDTO.setHouse_crop(signUpDTO.getHouse_crop());
 
-        // 사용자 회원가입 : 농장 아이디로 농장 이름과 키우는 작물 수정
-        houseService.update_house_name(houseInfoDTO);
-
+        // 사용자 회원가입 : 사용자의 농장 추가 및 농장 아이디로 농장 이름과 키우는 작물 수정
+        houseService.add_house(signUpDTO.getUser_pk(), houseInfoDTO);
     }
 }

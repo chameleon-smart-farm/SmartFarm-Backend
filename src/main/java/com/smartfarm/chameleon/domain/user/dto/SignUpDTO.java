@@ -5,6 +5,9 @@ import lombok.Data;
 @Data
 public class SignUpDTO {
 
+    // 농장 정보 수정용 사용자 아이디
+    private int user_pk;
+
     // 농장 아이디
     private int house_id;
 
