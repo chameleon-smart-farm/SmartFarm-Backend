@@ -27,7 +27,10 @@
     </select>
 
     <insert id="sign_up"
-        parameterType="com.smartfarm.chameleon.domain.user.dto.SignUpDTO" >
+        parameterType="com.smartfarm.chameleon.domain.user.dto.SignUpDTO" 
+        useGeneratedKeys="true" 
+        keyProperty="user_pk" 
+        keyColumn="id" >
 
         INSERT INTO user (user_name, user_id, user_pwd, faw_crop)
         VALUES  (#{user_name}, #{user_id}, #{user_pwd}, #{faw_crop} )

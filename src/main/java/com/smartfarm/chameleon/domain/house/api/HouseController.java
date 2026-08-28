@@ -48,9 +48,9 @@ public class HouseController {
     
     @PutMapping("/update")
     @Operation(summary = "농장 정보 수정" , description = "농장 아이디로 농장 이름과 키우는 작물 수정하는 API")
-    public void update_house_name(@RequestBody HouseInfoDTO houseInfoDto ) {
+    public void update_house_name(@AuthenticationPrincipal(expression = "PK") int USER_PK, @RequestBody HouseInfoDTO houseInfoDto ) {
         log.info("HouseController : 농장 정보 수정 API ");
-        houseService.update_house_name(houseInfoDto);
+        houseService.update_house_name(USER_PK, houseInfoDto);
     }
 
     @PutMapping("/add_house")

@@ -2,6 +2,7 @@ package com.smartfarm.chameleon.domain.house_status.api;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smartfarm.chameleon.domain.house_machine.dto.MachineListDTO;
 import com.smartfarm.chameleon.domain.house_status.application.HouseStatusService;
 import com.smartfarm.chameleon.domain.house_status.dto.HouseWeatherDTO;
 import com.smartfarm.chameleon.domain.house_status.dto.StatusDTO;
@@ -60,6 +62,13 @@ public class HouseStatusController {
         log.debug("HouseStatusController : MQTT 테스트 API");
 
         return new ResponseEntity<>(houseStatusService.read_in_tem().get(), HttpStatus.OK);
+    }
+
+    @GetMapping("/user_sensor_list/{house_id}")
+    @Operation(summary = "사용자 보유 센서 리스트 반환", description = "사용자가 보유하고 있는 센서의 리스트를 반환하는 API")
+    public ResponseEntity<List<MachineListDTO>> get_user_machine_list(@PathVariable int house_id) {
+        log.info("HouseStatusController : 사용자 보유 센서 리스트 반환 API");
+        return new ResponseEntity<List<MachineListDTO>>(houseStatusService.read_user_sensor_list(house_id).get(), HttpStatus.OK);
     }
 
     @GetMapping("/{sensor_kind}/get_double_sensor_info/{house_id}")

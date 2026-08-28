@@ -68,6 +68,8 @@ public class HouseService {
             HouseInfoDTO info_result = new HouseInfoDTO();
             info_result.setHouse_id(h.getHouse_id());
             info_result.setHouse_name(h.getHouse_name());
+            info_result.setHouse_crop(new String());
+            info_result.setHouse_add(new String());
 
             // CompletableFuture 생성 및 Map에 저장
             CompletableFuture<String> future = new CompletableFuture<String>();
@@ -79,7 +81,8 @@ public class HouseService {
             String device_id = h.getDevice_id();
 
             MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
-            mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/house_info");
+            mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/house_info_list");
+            mqttPublisherDTO.setMsg("house_info_list");
             mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
 
             mqttPublisher.sendMessage(mqttPublisherDTO);
@@ -106,9 +109,6 @@ public class HouseService {
                 log.error("HouseService - read_house : TimeoutException 에러 발생");
             } catch (ParseException e) {
                 log.error("HouseService - read_house : TimeoutException 에러 발생");
-            }finally {
-                info_result.setHouse_crop(new String());
-                info_result.setHouse_add(new String());
             }
 
             // 결과 리스트에 객체 추가
@@ -144,9 +144,9 @@ public class HouseService {
      * 
      * @param houseInfoDto
      */
-    @CacheEvict(value = {"read_house_name_list", "read_house_info"})
+    @CacheEvict(value = {"read_house_name_list", "read_house_info"}, key="#p0")
     @Transactional
-    public void update_house_name(HouseInfoDTO houseInfoDto){
+    public void update_house_name(int user_pk, HouseInfoDTO houseInfoDto){
 
         // 농장 아이디로 농장 이름 변경
         houseMapper.update_house_name(houseInfoDto);
@@ -163,9 +163,10 @@ public class HouseService {
         // MQTT 메시지 발행
         MqttPublisherDTO mqttPublisherDTO = new MqttPublisherDTO();
         mqttPublisherDTO.setTopic("core/topic/tolocal/" + device_id + "/house_info_update");
+        mqttPublisherDTO.setMsg("house_info_update");
         mqttPublisherDTO.setRequest_id(mqttConfig.return_count());
         
-        mqttPublisher.sendMessage(mqttPublisherDTO);
+        mqttPublisher.sendDTO(mqttPublisherDTO, houseInfoDto);
 
         log.debug("HouseService - update_house_name : MQTT 메시지 발행 후 결과 대기 중");
 
@@ -190,7 +191,7 @@ public class HouseService {
      *  - USER_PK와 HOUSE_ID 연결
      *  - update_house_name 호출 - 농장 아이디로 농장 이름과 키우는 작물 수정
      */
-    @CacheEvict(value = {"read_house_name_list", "read_house_info"})
+    @CacheEvict(value = {"read_house_name_list", "read_house_info"}, key="#p0")
     @Transactional
     public void add_house(int USER_PK, HouseInfoDTO houseInfoDto){
 
@@ -203,7 +204,7 @@ public class HouseService {
         houseMapper.add_house(userHouseDTO);
 
         // 농장 아이디로 농장 이름과 키우는 작물 수정
-        update_house_name(houseInfoDto);
+        update_house_name(USER_PK,houseInfoDto);
 
     }
 
