@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+		<Properties>
+        <!-- docker-compose 환경변수 가져오기 -->
+        <Property name="LOGSTASH_HOST" value="${env:LOGSTASH_HOST:-localhost}"/>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender for local output -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}:%L - %msg%n}"/>
+        </Console>
+
+        <!-- Socket Appender to send logs to Logstash -->
+        <Socket name="LogstashAppender" host="${LOGSTASH_HOST}" port="5000" protocol="TCP">
+            <JsonLayout complete="false" compact="true" eventEol="true"/>
+        </Socket>
+    </Appenders>
+
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="LogstashAppender">
+		            <!-- 필터를 적용해 모든 로그에서 INFO만 전달 -->
+				        <Filters>
+				            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+				        </Filters>
+				    </AppenderRef>
+        </Root>
+    </Loggers>
+</Configuration>
