@@ -24,8 +24,8 @@ public class FCMService {
         
         // 사용자의 Firebase 토큰 값을 조회
         String fcm_token = fcmMapper.get_fcm_token(messageDTO.getUser_id());
-        log.info("fcm_token : {}", fcm_token);
-        log.info("body : {}", messageDTO.getBody());
+        // log.info("fcm_token : {}", fcm_token);
+        // log.info("body : {}", messageDTO.getBody());
 
         // 메시지 구성
         Message message = Message.builder()

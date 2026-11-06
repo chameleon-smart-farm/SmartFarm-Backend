@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import com.smartfarm.chameleon.global.filter.JwtAuthenticationFilter;
+import com.smartfarm.chameleon.global.filter.LoggingFilter;
 import com.smartfarm.chameleon.global.filter.RateLimitFilter;
 import com.smartfarm.chameleon.global.jwt.CustomUserDetailsService;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
@@ -63,6 +64,7 @@ public class SecurityConfig {
                 .addFilterBefore(new RateLimitFilter(bucketConfig), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, redisService),
                         UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new LoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .cors(withDefaults());    // cors 활성화와 동시에 WebConfig 옵션을 사용
         
         return http.build();
