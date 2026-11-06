@@ -9,12 +9,12 @@
     <Appenders>
         <!-- Console Appender for local output -->
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}:%L - %msg%n}"/>
+            <PatternLayout pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5level] [%logger{36}:%L] [%X{trace_id}] [%X{uri}] [%X{body}] - %msg%n}"/>
         </Console>
 
         <!-- Socket Appender to send logs to Logstash -->
         <Socket name="LogstashAppender" host="${LOGSTASH_HOST}" port="5000" protocol="TCP">
-            <JsonLayout complete="false" compact="true" eventEol="true"/>
+            <JsonLayout complete="false" compact="true" eventEol="true" properties="true" />
         </Socket>
     </Appenders>
 
@@ -22,11 +22,11 @@
         <Root level="DEBUG">
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="LogstashAppender">
-		            <!-- 필터를 적용해 모든 로그에서 INFO만 전달 -->
-				        <Filters>
-				            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-				        </Filters>
-				    </AppenderRef>
+            <!-- 필터를 적용해 모든 로그에서 INFO만 전달 -->
+                <Filters>
+                    <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+                </Filters>
+            </AppenderRef>
         </Root>
     </Loggers>
 </Configuration>

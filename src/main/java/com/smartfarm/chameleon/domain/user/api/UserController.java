@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,15 +39,32 @@ public class UserController {
                                                 @AuthenticationPrincipal(expression = "FAW_CROP") String USER_FAW_CROP) {
 
         log.info("UserController : 사용자 정보 반환 API");
-        return new ResponseEntity<>(userService.read_user(USER_ID, USER_NAME, USER_FAW_CROP), HttpStatus.OK);
+
+        Optional<UserDTO> result = userService.read_user(USER_ID, USER_NAME, USER_FAW_CROP);                                        
+
+        if(result.isPresent()){
+            return new ResponseEntity<UserDTO>(result.get(), HttpStatus.OK);
+        }else {
+            log.info("사용자 정보 반환 실패");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/update")
     @Operation(summary = "사용자 정보 수정" , description = "이름, 관심 작물을 수정하는 API")
-    public void update_user(@AuthenticationPrincipal(expression = "PK") int USER_PK, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> update_user(@AuthenticationPrincipal(expression = "PK") int USER_PK, @RequestBody UserDTO userDTO) {
         
         log.info("UserController : 사용자 정보 수정 API");
-        userService.update_user(USER_PK, userDTO);
+
+        Optional<String> result = userService.update_user(USER_PK, userDTO);
+
+        if(result.isPresent()){
+            return new ResponseEntity<String>(result.get(), HttpStatus.OK);
+        }else {
+            log.info("사용자 정보 수정 실패");
+            return new ResponseEntity<>("사용자 정보 수정 실패", HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @PostMapping("/serial")
@@ -53,16 +72,32 @@ public class UserController {
     public ResponseEntity<Integer> validate_serial(@RequestBody String serial) {
 
         log.info("UserController : 시리얼 번호 확인 API");
-        return new ResponseEntity<>(userService.validate_serial(serial),HttpStatus.OK);
+
+        Optional<Integer> house_id = userService.validate_serial(serial);
+
+        if(house_id.isPresent()){
+            return new ResponseEntity<>(house_id.get(),HttpStatus.OK);
+        }else{
+            log.info("시리얼 번호 확인 실패");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/sign_up")
     @Operation(summary = "사용자 회원 가입" , description = "사용자 이름, 아이디, 비밀번호, 관심 작물, 농장 아이디를 입력받고 농장 아이디로 농장 이름(회사 서버)과 키우는 작물(농장 서버)을 입력(수정)하는 API")
-    public void sign_up(@RequestBody SignUpDTO signUpDTO) {
+    public ResponseEntity<String> sign_up(@RequestBody SignUpDTO signUpDTO) {
+
         log.info("UserController : 사용자 회원 가입 API");
-        userService.sign_up(signUpDTO);
+
+        Optional<String> result = userService.sign_up(signUpDTO);
+
+        if(result.isPresent()){
+            return new ResponseEntity<String>(result.get(), HttpStatus.CREATED);
+        }else {
+            log.info("회원가입 실패");
+            return new ResponseEntity<>("회원가입 실패", HttpStatus.BAD_REQUEST);
+        }
+        
     }
-    
-    
     
 }
