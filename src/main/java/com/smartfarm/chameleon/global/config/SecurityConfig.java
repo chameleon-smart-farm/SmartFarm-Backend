@@ -17,10 +17,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 import com.smartfarm.chameleon.global.filter.JwtAuthenticationFilter;
 import com.smartfarm.chameleon.global.filter.LoggingFilter;
+import com.smartfarm.chameleon.global.filter.RSADecodeFilter;
 import com.smartfarm.chameleon.global.filter.RateLimitFilter;
 import com.smartfarm.chameleon.global.jwt.CustomUserDetailsService;
 import com.smartfarm.chameleon.global.jwt.JwtTokenProvider;
 import com.smartfarm.chameleon.global.redis.RedisService;
+import com.smartfarm.chameleon.global.rsa.RsaKeyHolder;
 
 
 @EnableWebSecurity
@@ -38,6 +40,9 @@ public class SecurityConfig {
 
     @Autowired
     private BucketConfig bucketConfig;
+
+    @Autowired 
+    private RsaKeyHolder rsaKeyHolder;
 
     // 완전히 일치해야하는 URI 목록
     public static final List<String> PUBLIC_URIS_EQUAL = List.of(
@@ -64,6 +69,7 @@ public class SecurityConfig {
                 .addFilterBefore(new RateLimitFilter(bucketConfig), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService, redisService),
                         UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new RSADecodeFilter(rsaKeyHolder), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new LoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .cors(withDefaults());    // cors 활성화와 동시에 WebConfig 옵션을 사용
         
